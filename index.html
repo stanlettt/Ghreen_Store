@@ -1700,13 +1700,43 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollTop();
 });
 
-/* Active le chargement natif lazy sur toutes les images du DOM */
+/* ============================================================
+   LAZY LOADING INTELLIGENT — IntersectionObserver
+   ============================================================ */
+let _lazyObserver = null;
+
 function activerLazyImages() {
-  document.querySelectorAll('img[loading="lazy"]').forEach(img => {
-    if (img.complete && img.naturalWidth > 0) {
-      img.closest('.produit-img')?.classList.add('loaded');
-    }
+  // Créer l'observer une seule fois
+  if (!_lazyObserver) {
+    _lazyObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const img = entry.target;
+        if (img.dataset.src) {
+          img.src = img.dataset.src;
+          delete img.dataset.src;
+        }
+        _lazyObserver.unobserve(img);
+      });
+    }, {
+      rootMargin: '200px 0px', // Préchargement 200px avant d'entrer dans la vue
+      threshold: 0
+    });
+  }
+
+  // Observer uniquement les images principales (gs-lazy) sans src encore chargé
+  document.querySelectorAll('img.gs-lazy:not([src])').forEach(img => {
+    // Si déjà en cache (complete), charger immédiatement
+    _lazyObserver.observe(img);
   });
+}
+
+/* Charge la photo secondaire à la demande (au changement de photo) */
+function chargerImageSiNecessaire(img) {
+  if (!img.src && img.dataset.src) {
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+  }
 }
 
 function initHeader() {
@@ -1767,6 +1797,8 @@ function setPhotoActive(produitId, index) {
   imgs.forEach((img, i) => {
     img.classList.toggle('active', i === index);
     img.classList.toggle('cachee', i !== index);
+    // Charger à la demande si c'est la photo sélectionnée
+    if (i === index) chargerImageSiNecessaire(img);
   });
   dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
 }
@@ -1781,12 +1813,24 @@ function rendreCarte(p) {
 
   let imgContenu = '';
   if (photos.length > 0) {
-    imgContenu = photos.map((src, i) =>
-      `<img src="${src}" alt="${p.nom}" loading="lazy" decoding="async"
-        class="${i === idxActif ? 'active' : 'cachee'}"
-        onload="this.closest('.produit-img')?.classList.add('loaded')"
-        onerror="this.style.display='none'" />`
-    ).join('');
+    // On ne met src que sur la première photo active ; les autres reçoivent data-src
+    // pour ne PAS être téléchargées tant qu'on ne les demande pas
+    imgContenu = photos.map((src, i) => {
+      const estActif = (i === idxActif);
+      if (estActif) {
+        // Image principale : on laisse le IntersectionObserver injecter le src
+        return `<img data-src="${src}" alt="${p.nom}" decoding="async"
+          class="${estActif ? 'active' : 'cachee'} gs-lazy"
+          onload="this.closest('.produit-img')?.classList.add('loaded')"
+          onerror="this.style.display='none'" />`;
+      } else {
+        // Photos secondaires : stockées uniquement dans data-src, src jamais mis
+        return `<img data-src="${src}" alt="${p.nom}" decoding="async"
+          class="cachee gs-lazy-secondary"
+          onload="this.closest('.produit-img')?.classList.add('loaded')"
+          onerror="this.style.display='none'" />`;
+      }
+    }).join('');
     if (photos.length > 1) {
       imgContenu += `
         <button class="photo-nav prev" onclick="event.stopPropagation();changerPhoto(${p.id},-1)">‹</button>
@@ -1876,7 +1920,7 @@ function afficherProduits(liste) {
           ${affichage.map(p => rendreCarte(p)).join('')}
         </div>
       </div>`;
-    requestAnimationFrame(activerLazyImages);
+    requestAnimationFrame(() => activerLazyImages());
     return;
   }
 
@@ -1919,8 +1963,8 @@ function afficherProduits(liste) {
   }
 
   contenu.innerHTML = html;
-  // Vérifier les images déjà en cache (chargées instantanément)
-  requestAnimationFrame(activerLazyImages);
+  // Activer le lazy loading sur les nouvelles images injectées
+  requestAnimationFrame(() => activerLazyImages());
 }
 
 function filtrerCategorie(cat) {
