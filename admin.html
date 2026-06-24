@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ghreen_Store — Administration</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose: #c2185b;
+  --rose-vif: #e91e8c;
+  --rose-pale: rgba(194,24,91,0.07);
+  --rose-fonce: #880e4f;
+  --fond: #fdf8f5;
+  --fond-2: #fff5f7;
+  --texte: #2a1a20;
+  --texte-doux: #7a4a5a;
+  --gris: #9e6b7a;
+  --vert: #27ae60;
+  --rouge: #e53935;
+  --blanc: #ffffff;
+  --font-titre: 'Cormorant Garamond', serif;
+  --font-corps: 'Montserrat', sans-serif;
+  --radius: 14px;
+  --radius-sm: 8px;
+  --ombre: 0 8px 40px rgba(194,24,91,0.18);
+  --ombre-douce: 0 4px 20px rgba(194,24,91,0.10);
+  --transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: var(--font-corps);
+  background: var(--fond);
+  color: var(--texte);
+  font-size: 14px;
+  min-height: 100vh;
+}
+
+/* ── ÉCRAN DE CONNEXION ── */
+#ecranConnexion {
+  position: fixed; inset: 0; z-index: 9999;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, #fdf8f5 0%, #fff5f7 100%);
+}
+.login-boite {
+  background: #fff;
+  border: 1px solid rgba(194,24,91,0.2);
+  border-radius: var(--radius);
+  padding: 3rem 2.5rem;
+  max-width: 400px; width: 90%;
+  box-shadow: var(--ombre);
+  text-align: center;
+}
+.login-logo {
+  font-family: var(--font-titre);
+  font-size: 2.5rem; font-weight: 300;
+  color: var(--rose); letter-spacing: 0.2em;
+  margin-bottom: 0.3rem;
+}
+.login-logo span { color: var(--texte); }
+.login-sous { font-size: 0.72rem; letter-spacing: 0.3em; text-transform: uppercase;
+  color: var(--texte-doux); margin-bottom: 2.5rem; }
+.login-boite input[type="password"] {
+  width: 100%; padding: 0.9rem 1.2rem;
+  border: 1.5px solid rgba(194,24,91,0.25);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.95rem;
+  color: var(--texte); background: var(--fond-2);
+  outline: none; transition: var(--transition);
+  text-align: center; letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+.login-boite input[type="password"]:focus { border-color: var(--rose); background: #fce4ec; }
+.login-erreur { color: var(--rouge); font-size: 0.78rem; margin-bottom: 0.8rem; display: none; }
+.login-erreur.visible { display: block; }
+
+/* ── HEADER ADMIN ── */
+#adminApp { display: none; }
+.admin-header {
+  background: linear-gradient(135deg, var(--rose) 0%, var(--rose-vif) 100%);
+  color: #fff; padding: 1rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 20px rgba(194,24,91,0.3);
+}
+.admin-header-logo {
+  font-family: var(--font-titre);
+  font-size: 1.6rem; font-weight: 300;
+  letter-spacing: 0.2em;
+}
+.admin-header-logo span { opacity: 0.7; }
+.admin-header-right { display: flex; align-items: center; gap: 1rem; }
+.admin-badge {
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  background: rgba(255,255,255,0.2); padding: 0.3rem 0.8rem;
+  border-radius: 50px;
+}
+.btn-deconnexion {
+  background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4);
+  color: #fff; padding: 0.4rem 1rem; border-radius: var(--radius-sm);
+  font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; font-family: var(--font-corps);
+  transition: var(--transition);
+}
+.btn-deconnexion:hover { background: rgba(255,255,255,0.3); }
+
+/* ── LAYOUT PRINCIPAL ── */
+.admin-main { max-width: 1300px; margin: 0 auto; padding: 2rem; }
+
+/* ── STATS ── */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem; margin-bottom: 2rem;
+}
+.stat-carte {
+  background: #fff; border: 1px solid rgba(194,24,91,0.12);
+  border-radius: var(--radius); padding: 1.4rem;
+  display: flex; align-items: center; gap: 1rem;
+  box-shadow: var(--ombre-douce);
+}
+.stat-icone { font-size: 2rem; }
+.stat-val { font-family: var(--font-titre); font-size: 2rem; font-weight: 300; color: var(--rose); line-height: 1; }
+.stat-lib { font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gris); margin-top: 0.2rem; }
+
+/* ── TABS ── */
+.tabs { display: flex; gap: 0; margin-bottom: 2rem; border-bottom: 2px solid rgba(194,24,91,0.15); }
+.tab {
+  padding: 0.8rem 1.5rem; font-size: 0.75rem; letter-spacing: 0.15em;
+  text-transform: uppercase; cursor: pointer; border: none; background: none;
+  color: var(--texte-doux); font-family: var(--font-corps);
+  border-bottom: 2px solid transparent; margin-bottom: -2px;
+  transition: var(--transition);
+}
+.tab:hover { color: var(--rose); }
+.tab.actif { color: var(--rose); border-bottom-color: var(--rose); font-weight: 600; }
+
+/* ── SECTION CONTENU ── */
+.tab-content { display: none; }
+.tab-content.actif { display: block; }
+
+/* ── FORMULAIRE AJOUT / MODIF ── */
+.section-titre-admin {
+  font-family: var(--font-titre); font-size: 1.8rem; font-weight: 300;
+  color: var(--texte); margin-bottom: 1.5rem;
+}
+.section-titre-admin span { color: var(--rose); font-style: italic; }
+.form-admin {
+  background: #fff; border: 1px solid rgba(194,24,91,0.12);
+  border-radius: var(--radius); padding: 2rem;
+  box-shadow: var(--ombre-douce); margin-bottom: 2rem;
+}
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+@media (max-width: 600px) { .form-grid, .form-grid-3 { grid-template-columns: 1fr; } }
+.fg { display: flex; flex-direction: column; gap: 0.4rem; }
+.fg label {
+  font-size: 0.7rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--rose-fonce); font-weight: 500;
+}
+.fg input, .fg select, .fg textarea {
+  background: var(--fond-2); border: 1.5px solid rgba(194,24,91,0.2);
+  color: var(--texte); padding: 0.7rem 1rem;
+  font-family: var(--font-corps); font-size: 0.88rem;
+  border-radius: var(--radius-sm); outline: none; transition: var(--transition);
+}
+.fg input:focus, .fg select:focus, .fg textarea:focus {
+  border-color: var(--rose); background: #fce4ec;
+}
+.fg textarea { resize: vertical; min-height: 70px; }
+.fg-full { grid-column: 1 / -1; }
+.form-actions { display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap; }
+
+/* ── BOUTONS ── */
+.btn-rose {
+  background: var(--rose); color: #fff; border: none;
+  padding: 0.75rem 2rem; border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.78rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition); font-weight: 500;
+}
+.btn-rose:hover { background: var(--rose-vif); transform: translateY(-1px); box-shadow: var(--ombre-douce); }
+.btn-outline-admin {
+  background: none; color: var(--rose); border: 1.5px solid var(--rose);
+  padding: 0.75rem 2rem; border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.78rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+}
+.btn-outline-admin:hover { background: var(--rose-pale); }
+.btn-danger {
+  background: none; color: var(--rouge); border: 1.5px solid var(--rouge);
+  padding: 0.4rem 0.9rem; border-radius: var(--radius-sm);
+  font-size: 0.72rem; letter-spacing: 0.1em; cursor: pointer;
+  font-family: var(--font-corps); transition: var(--transition);
+}
+.btn-danger:hover { background: var(--rouge); color: #fff; }
+.btn-edit {
+  background: none; color: var(--rose); border: 1.5px solid var(--rose);
+  padding: 0.4rem 0.9rem; border-radius: var(--radius-sm);
+  font-size: 0.72rem; letter-spacing: 0.1em; cursor: pointer;
+  font-family: var(--font-corps); transition: var(--transition);
+}
+.btn-edit:hover { background: var(--rose); color: #fff; }
+.btn-vert {
+  background: var(--vert); color: #fff; border: none;
+  padding: 0.75rem 2rem; border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.78rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  cursor: pointer; transition: var(--transition);
+}
+.btn-vert:hover { opacity: 0.9; }
+
+/* ── TABLE PRODUITS ── */
+.table-wrap { background: #fff; border: 1px solid rgba(194,24,91,0.12); border-radius: var(--radius); overflow: hidden; box-shadow: var(--ombre-douce); }
+.table-top { padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-bottom: 1px solid rgba(194,24,91,0.1); }
+.table-recherche {
+  border: 1.5px solid rgba(194,24,91,0.2); border-radius: var(--radius-sm);
+  padding: 0.5rem 1rem; font-family: var(--font-corps); font-size: 0.85rem;
+  color: var(--texte); background: var(--fond-2); outline: none;
+  width: 240px;
+}
+.table-recherche:focus { border-color: var(--rose); }
+table { width: 100%; border-collapse: collapse; }
+th {
+  background: var(--fond-2); text-align: left;
+  padding: 0.8rem 1rem; font-size: 0.68rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--rose-fonce); font-weight: 600;
+  border-bottom: 1px solid rgba(194,24,91,0.1);
+}
+td { padding: 0.75rem 1rem; border-bottom: 1px solid rgba(194,24,91,0.06); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--fond-2); }
+.td-photo { width: 60px; }
+.td-photo img { width: 50px; height: 50px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid rgba(194,24,91,0.15); }
+.td-photo .no-photo { width: 50px; height: 50px; background: var(--fond-2); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.td-nom { font-family: var(--font-titre); font-size: 1rem; font-weight: 300; }
+.td-cat { display: inline-block; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; background: var(--rose-pale); color: var(--rose); padding: 0.15rem 0.6rem; border-radius: 50px; }
+.td-prix { font-weight: 600; color: var(--rose); white-space: nowrap; }
+.td-badge { display: inline-block; font-size: 0.62rem; letter-spacing: 0.1em; background: var(--rose); color: #fff; padding: 0.15rem 0.5rem; border-radius: 50px; }
+.td-actions { display: flex; gap: 0.4rem; white-space: nowrap; }
+.badge-visible { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: var(--vert); }
+.badge-invisible { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #ccc; }
+
+/* ── SECTION SHEETS ── */
+.sheets-setup {
+  background: #fff; border: 1px solid rgba(194,24,91,0.12);
+  border-radius: var(--radius); padding: 2rem;
+  box-shadow: var(--ombre-douce); margin-bottom: 2rem;
+}
+.sheets-etapes { display: flex; flex-direction: column; gap: 1.5rem; margin: 1.5rem 0; }
+.sheets-etape { display: flex; gap: 1rem; align-items: flex-start; }
+.etape-num {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: var(--rose); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.85rem; font-weight: 600; flex-shrink: 0;
+}
+.etape-txt { font-size: 0.88rem; color: var(--texte-doux); line-height: 1.6; }
+.etape-txt strong { color: var(--texte); }
+.etape-txt code {
+  background: var(--fond-2); padding: 0.15rem 0.5rem;
+  border-radius: 4px; font-size: 0.82rem; color: var(--rose-fonce);
+  font-family: monospace;
+}
+.url-input-wrap { display: flex; gap: 0.5rem; margin-top: 0.8rem; flex-wrap: wrap; }
+.url-input-wrap input {
+  flex: 1; min-width: 200px; padding: 0.7rem 1rem;
+  border: 1.5px solid rgba(194,24,91,0.25); border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.85rem; outline: none;
+  background: var(--fond-2); color: var(--texte);
+}
+.url-input-wrap input:focus { border-color: var(--rose); }
+
+/* ── TOAST ── */
+#adminToast {
+  position: fixed; bottom: 2rem; right: 2rem; z-index: 9999;
+  background: var(--texte); color: #fff;
+  padding: 0.8rem 1.5rem; border-radius: var(--radius-sm);
+  font-size: 0.82rem; letter-spacing: 0.05em;
+  transform: translateY(100px); opacity: 0;
+  transition: all 0.3s ease; pointer-events: none;
+  max-width: 320px;
+}
+#adminToast.visible { transform: translateY(0); opacity: 1; }
+#adminToast.succes { background: var(--vert); }
+#adminToast.erreur { background: var(--rouge); }
+
+/* ── MODAL CONFIRM ── */
+.modal-confirm {
+  display: none; position: fixed; inset: 0; z-index: 8000;
+  background: rgba(0,0,0,0.6); align-items: center; justify-content: center;
+}
+.modal-confirm.actif { display: flex; }
+.modal-confirm-boite {
+  background: #fff; border-radius: var(--radius); padding: 2rem;
+  max-width: 380px; width: 90%; text-align: center;
+  box-shadow: var(--ombre);
+}
+.modal-confirm-boite h3 { font-family: var(--font-titre); font-size: 1.4rem; font-weight: 300; color: var(--rouge); margin-bottom: 1rem; }
+.modal-confirm-boite p { font-size: 0.88rem; color: var(--texte-doux); margin-bottom: 1.5rem; }
+.modal-confirm-actions { display: flex; gap: 1rem; justify-content: center; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  .admin-main { padding: 1rem; }
+  .form-grid { grid-template-columns: 1fr; }
+  table { font-size: 0.82rem; }
+  th, td { padding: 0.5rem 0.6rem; }
+  .td-photo, .td-actions { min-width: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     ÉCRAN DE CONNEXION
+════════════════════════════════════════════════════ -->
+<div id="ecranConnexion">
+  <div class="login-boite">
+    <div class="login-logo">Ghreen<span>_Store</span></div>
+    <div class="login-sous">Espace Administrateur</div>
+    <input type="password" id="mdpInput" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')seConnecter()" />
+    <div class="login-erreur" id="loginErreur">Mot de passe incorrect. Réessayez.</div>
+    <button class="btn-rose" style="width:100%;padding:0.9rem;" onclick="seConnecter()">Se connecter →</button>
+    <p style="margin-top:1.5rem;font-size:0.72rem;color:var(--gris);">Accès réservé à la propriétaire de Ghreen_Store</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     APPLICATION ADMIN
+════════════════════════════════════════════════════ -->
+<div id="adminApp">
+
+  <!-- Header -->
+  <div class="admin-header">
+    <div class="admin-header-logo">Ghreen<span>_Store</span></div>
+    <div class="admin-header-right">
+      <span class="admin-badge">⚙ Administration</span>
+      <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
+    </div>
+  </div>
+
+  <div class="admin-main">
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab actif" onclick="changerTab('produits', this)">📦 Produits</button>
+      <button class="tab" onclick="changerTab('ajouter', this)">➕ Ajouter un produit</button>
+      <button class="tab" onclick="changerTab('sheets', this)">🔗 Google Sheets</button>
+      <button class="tab" onclick="changerTab('export', this)">💾 Exporter</button>
+    </div>
+
+    <!-- TAB : Liste des produits -->
+    <div class="tab-content actif" id="tab-produits">
+      <div class="table-wrap">
+        <div class="table-top">
+          <h2 class="section-titre-admin" style="margin:0;font-size:1.3rem;">Tous les <span>produits</span></h2>
+          <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;">
+            <input class="table-recherche" type="text" placeholder="🔍 Rechercher..." oninput="filtrerTable(this.value)" />
+            <select onchange="filtrerParCat(this.value)" style="border:1.5px solid rgba(194,24,91,0.2);border-radius:var(--radius-sm);padding:0.5rem 0.8rem;font-family:var(--font-corps);font-size:0.82rem;background:var(--fond-2);color:var(--texte);outline:none;">
+              <option value="">Toutes catégories</option>
+              <option value="stanley">Stanley</option>
+              <option value="bijoux">Bijoux</option>
+              <option value="babouches">Babouches</option>
+              <option value="sacs">Sacs</option>
+              <option value="parfums">Parfums</option>
+              <option value="perruques">Perruques</option>
+            </select>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table id="tableProduitsEl">
+            <thead>
+              <tr>
+                <th>Photo</th>
+                <th>Nom</th>
+                <th>Catégorie</th>
+                <th>Prix</th>
+                <th>Badge</th>
+                <th>Note</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableProduits"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB : Ajouter / Modifier -->
+    <div class="tab-content" id="tab-ajouter">
+      <h2 class="section-titre-admin" id="formTitre">Ajouter un <span>produit</span></h2>
+      <div class="form-admin">
+        <input type="hidden" id="editId" value="" />
+        <div class="form-grid">
+          <div class="fg">
+            <label>Nom du produit *</label>
+            <input type="text" id="fNom" placeholder="Ex : Sac à main luxe" />
+          </div>
+          <div class="fg">
+            <label>Catégorie *</label>
+            <select id="fCat">
+              <option value="">-- Choisir --</option>
+              <option value="stanley">Gourdes Stanley</option>
+              <option value="bijoux">Bijoux & Accessoires</option>
+              <option value="babouches">Babouches</option>
+              <option value="sacs">Sacs</option>
+              <option value="parfums">Parfums</option>
+              <option value="perruques">Perruques & Tissages</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Prix (FCFA) *</label>
+            <input type="number" id="fPrix" placeholder="Ex : 8500" min="0" />
+          </div>
+          <div class="fg">
+            <label>Badge</label>
+            <select id="fBadge">
+              <option value="">Aucun</option>
+              <option value="Nouveau">Nouveau</option>
+              <option value="Luxe">Luxe</option>
+              <option value="Promo">Promo</option>
+              <option value="Bestseller">Bestseller</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Note (1 à 5)</label>
+            <select id="fNote">
+              <option value="5">⭐⭐⭐⭐⭐ — 5</option>
+              <option value="4">⭐⭐⭐⭐ — 4</option>
+              <option value="3">⭐⭐⭐ — 3</option>
+              <option value="2">⭐⭐ — 2</option>
+              <option value="1">⭐ — 1</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>Icône emoji</label>
+            <input type="text" id="fIcone" placeholder="Ex : 👜" maxlength="4" />
+          </div>
+          <div class="fg fg-full">
+            <label>Chemin de la photo (dans le dossier images/)</label>
+            <input type="text" id="fPhoto" placeholder="Ex : images/sacs53.jpg" />
+            <small style="color:var(--gris);font-size:0.72rem;margin-top:0.3rem;">💡 Mettez d'abord l'image dans votre dossier "images/" sur GitHub, puis écrivez le chemin ici.</small>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button class="btn-rose" onclick="sauvegarderProduit()">💾 Sauvegarder le produit</button>
+          <button class="btn-outline-admin" onclick="reinitialiserForm()">✕ Annuler</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB : Google Sheets -->
+    <div class="tab-content" id="tab-sheets">
+      <h2 class="section-titre-admin">Connexion <span>Google Sheets</span></h2>
+      <div class="sheets-setup">
+        <p style="color:var(--texte-doux);font-size:0.9rem;line-height:1.7;margin-bottom:1rem;">
+          Connectez un Google Sheet pour sauvegarder vos produits en ligne. Ainsi, même si vous videz le cache de votre navigateur, vos produits sont toujours disponibles.
+        </p>
+        <div class="sheets-etapes">
+          <div class="sheets-etape">
+            <div class="etape-num">1</div>
+            <div class="etape-txt">
+              <strong>Créez un Google Sheet</strong> sur <a href="https://sheets.google.com" target="_blank" style="color:var(--rose);">sheets.google.com</a> et nommez-le <code>Ghreen_Store_Produits</code>
+            </div>
+          </div>
+          <div class="sheets-etape">
+            <div class="etape-num">2</div>
+            <div class="etape-txt">
+              <strong>Ajoutez ces colonnes en ligne 1 :</strong><br>
+              <code>id</code> &nbsp;|&nbsp; <code>nom</code> &nbsp;|&nbsp; <code>cat</code> &nbsp;|&nbsp; <code>prix</code> &nbsp;|&nbsp; <code>badge</code> &nbsp;|&nbsp; <code>note</code> &nbsp;|&nbsp; <code>icone</code> &nbsp;|&nbsp; <code>photos</code>
+            </div>
+          </div>
+          <div class="sheets-etape">
+            <div class="etape-num">3</div>
+            <div class="etape-txt">
+              <strong>Publiez le Sheet :</strong> Fichier → Partager → Publier sur le web → Feuille 1 → Format CSV → Publier. Copiez le lien.
+            </div>
+          </div>
+          <div class="sheets-etape">
+            <div class="etape-num">4</div>
+            <div class="etape-txt">
+              <strong>Collez le lien CSV ici :</strong>
+              <div class="url-input-wrap">
+                <input type="url" id="sheetsUrl" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv" />
+                <button class="btn-rose" onclick="sauvegarderSheetsUrl()">Connecter</button>
+                <button class="btn-outline-admin" onclick="testerSheets()">Tester</button>
+              </div>
+            </div>
+          </div>
+          <div class="sheets-etape">
+            <div class="etape-num">5</div>
+            <div class="etape-txt">
+              <strong>Exportez vos produits actuels vers Sheets</strong> en cliquant sur l'onglet "Exporter".
+            </div>
+          </div>
+        </div>
+        <div id="sheetsStatut" style="display:none;padding:1rem;border-radius:var(--radius-sm);font-size:0.85rem;margin-top:1rem;"></div>
+      </div>
+    </div>
+
+    <!-- TAB : Export -->
+    <div class="tab-content" id="tab-export">
+      <h2 class="section-titre-admin">Exporter les <span>produits</span></h2>
+      <div class="sheets-setup">
+        <p style="color:var(--texte-doux);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;">
+          Exportez vos produits pour les sauvegarder ou les importer dans Google Sheets.
+        </p>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+          <button class="btn-rose" onclick="exporterCSV()">📥 Télécharger en CSV (pour Google Sheets)</button>
+          <button class="btn-outline-admin" onclick="exporterJSON()">📋 Copier le JSON (pour index.html)</button>
+        </div>
+        <div id="jsonZone" style="display:none;margin-top:1.5rem;">
+          <label style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--rose-fonce);font-weight:500;display:block;margin-bottom:0.5rem;">JSON à coller dans index.html (remplace const PRODUITS = [...])</label>
+          <textarea id="jsonContenu" style="width:100%;height:200px;font-family:monospace;font-size:0.78rem;padding:1rem;border:1.5px solid rgba(194,24,91,0.2);border-radius:var(--radius-sm);background:var(--fond-2);color:var(--texte);resize:vertical;" readonly></textarea>
+          <button class="btn-vert" style="margin-top:0.8rem;" onclick="copierJSON()">📋 Copier</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-main -->
+</div><!-- /adminApp -->
+
+<!-- Modal confirmation suppression -->
+<div class="modal-confirm" id="modalConfirm">
+  <div class="modal-confirm-boite">
+    <h3>⚠ Supprimer le produit ?</h3>
+    <p id="confirmMsg">Cette action est irréversible.</p>
+    <div class="modal-confirm-actions">
+      <button class="btn-outline-admin" onclick="fermerConfirm()">Annuler</button>
+      <button class="btn-danger" style="padding:0.75rem 2rem;font-size:0.78rem;" onclick="confirmerSuppression()">Supprimer</button>
+    </div>
+  </div>
+</div>
+
+<div id="adminToast"></div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   DONNÉES INITIALES (produits existants du site)
+════════════════════════════════════════════════════ */
+const MOT_DE_PASSE = 'Ghreen2026@Store';
+
+const PRODUITS_INITIAUX = [
+  { id:1,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements1.jpg', prix:4500, badge:'Nouveau', note:5 },
+  { id:2,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements2.jpg', prix:4500, badge:'Nouveau', note:5 },
+  { id:3,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements3.jpg', prix:4500, badge:'Nouveau', note:5 },
+  { id:4,  nom:'Caftan', cat:'bijoux', icone:'✨', photos:'images/vetements4.jpg', prix:15000, badge:'Luxe', note:5 },
+  { id:5,  nom:'Djellaba', cat:'bijoux', icone:'🧕', photos:'images/vetements5.jpg', prix:8900, badge:'', note:5 },
+  { id:6,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley1.jpg', prix:18000, badge:'', note:5 },
+  { id:7,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley2.jpg', prix:18000, badge:'Nouveau', note:5 },
+  { id:8,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley3.jpg', prix:16000, badge:'', note:5 },
+  { id:9,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley4.jpg', prix:16000, badge:'', note:5 },
+  { id:10, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley5.jpg', prix:16000, badge:'', note:5 },
+  { id:11, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley6.jpg', prix:16000, badge:'', note:5 },
+  { id:12, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley7.jpg', prix:16000, badge:'', note:5 },
+  { id:13, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley8.jpg', prix:16000, badge:'', note:4 },
+  { id:14, nom:'Collier', cat:'bijoux', icone:'💎', photos:'images/bijoux1.jpg', prix:12000, badge:'', note:4 },
+  { id:15, nom:'Bracelet', cat:'bijoux', icone:'💛', photos:'images/bijoux2.jpg', prix:3200, badge:'', note:4 },
+  { id:16, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux4.jpg', prix:6800, badge:'', note:5 },
+  { id:17, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux5.jpg', prix:6800, badge:'', note:5 },
+  { id:18, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux6.jpg', prix:6800, badge:'', note:5 },
+  { id:19, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux7.jpg', prix:6800, badge:'', note:5 },
+  { id:20, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux8.jpg', prix:6800, badge:'', note:5 },
+  { id:21, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux9.jpg', prix:6800, badge:'', note:5 },
+  { id:22, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux10.jpg', prix:6800, badge:'', note:5 },
+  { id:101, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux11.jpg', prix:6800, badge:'', note:5 },
+  { id:102, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux12.jpg', prix:6800, badge:'', note:5 },
+  { id:103, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux13.jpg', prix:6800, badge:'', note:5 },
+  { id:104, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux14.jpg', prix:6800, badge:'', note:5 },
+  { id:105, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux15.jpg', prix:6800, badge:'', note:5 },
+  { id:23, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches1.jpg', prix:2800, badge:'', note:5 },
+  { id:24, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches2.jpg', prix:2800, badge:'', note:5 },
+  { id:25, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches3.jpg', prix:2800, badge:'', note:5 },
+  { id:26, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches4.jpg', prix:2800, badge:'', note:5 },
+  { id:27, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches5.jpg', prix:2800, badge:'', note:5 },
+  { id:28, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches6.jpg', prix:2800, badge:'', note:5 },
+  { id:107, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches7.jpg', prix:2800, badge:'', note:5 },
+  { id:108, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches8.jpg', prix:2800, badge:'', note:5 },
+  { id:109, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches9.jpg', prix:2800, badge:'', note:5 },
+  { id:29, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs1.jpg', prix:8500, badge:'', note:4 },
+  { id:30, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs2.jpg', prix:8500, badge:'', note:4 },
+  { id:31, nom:'Sac', cat:'sacs', icone:'🎀', photos:'images/sacs3.jpg', prix:6200, badge:'Nouveau', note:5 },
+  { id:32, nom:'Sac', cat:'sacs', icone:'🎀', photos:'images/sacs4.jpg', prix:6200, badge:'Nouveau', note:5 },
+  { id:33, nom:'Sac', cat:'sacs', icone:'💼', photos:'images/sacs5.jpg', prix:11000, badge:'Luxe', note:5 },
+  { id:40, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs6.jpg', prix:8500, badge:'', note:5 },
+  { id:41, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs7.jpg', prix:8500, badge:'', note:5 },
+  { id:42, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs8.jpg', prix:8500, badge:'', note:5 },
+  { id:43, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs9.jpg', prix:8500, badge:'', note:5 },
+  { id:44, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs10.jpg', prix:8500, badge:'', note:5 },
+  { id:45, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs11.jpg', prix:8500, badge:'', note:5 },
+  { id:46, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs12.jpg', prix:8500, badge:'', note:5 },
+  { id:47, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs13.jpg', prix:8500, badge:'', note:5 },
+  { id:48, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs14.jpg', prix:8500, badge:'', note:5 },
+  { id:49, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs15.jpg', prix:8500, badge:'', note:5 },
+  { id:50, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs16.jpg', prix:8500, badge:'', note:5 },
+  { id:51, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs17.jpg', prix:8500, badge:'', note:5 },
+  { id:52, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs18.jpg', prix:8500, badge:'', note:5 },
+  { id:53, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs19.jpg', prix:8500, badge:'', note:5 },
+  { id:54, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs20.jpg', prix:8500, badge:'', note:5 },
+  { id:55, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs21.jpg', prix:8500, badge:'', note:5 },
+  { id:56, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs22.jpg', prix:8500, badge:'', note:5 },
+  { id:57, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs23.jpg', prix:8500, badge:'', note:5 },
+  { id:58, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs24.jpg', prix:8500, badge:'', note:5 },
+  { id:59, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs25.jpg', prix:8500, badge:'', note:5 },
+  { id:60, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs26.jpg', prix:8500, badge:'', note:5 },
+  { id:61, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs27.jpg', prix:8500, badge:'', note:5 },
+  { id:62, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs28.jpg', prix:8500, badge:'', note:5 },
+  { id:63, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs29.jpg', prix:8500, badge:'', note:5 },
+  { id:64, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs30.jpg', prix:8500, badge:'', note:5 },
+  { id:65, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs31.jpg', prix:8500, badge:'', note:5 },
+  { id:66, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs32.jpg', prix:8500, badge:'', note:5 },
+  { id:67, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs33.jpg', prix:8500, badge:'', note:5 },
+  { id:68, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs34.jpg', prix:8500, badge:'', note:5 },
+  { id:69, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs35.jpg', prix:8500, badge:'', note:5 },
+  { id:70, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs36.jpg', prix:8500, badge:'', note:5 },
+  { id:71, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs37.jpg', prix:8500, badge:'', note:5 },
+  { id:72, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs38.jpg', prix:8500, badge:'', note:5 },
+  { id:73, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs39.jpg', prix:8500, badge:'', note:5 },
+  { id:74, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs40.jpg', prix:8500, badge:'', note:5 },
+  { id:75, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs41.jpg', prix:8500, badge:'', note:5 },
+  { id:76, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs42.jpg', prix:8500, badge:'', note:5 },
+  { id:77, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs43.jpg', prix:8500, badge:'', note:5 },
+  { id:78, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs44.jpg', prix:8500, badge:'', note:5 },
+  { id:79, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs45.jpg', prix:8500, badge:'', note:5 },
+  { id:80, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs46.jpg', prix:8500, badge:'', note:5 },
+  { id:100, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs47.jpg', prix:8500, badge:'', note:5 },
+  { id:95, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs48.jpg', prix:8500, badge:'', note:5 },
+  { id:96, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs49.jpg', prix:8500, badge:'', note:5 },
+  { id:97, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs50.jpg', prix:8500, badge:'', note:5 },
+  { id:98, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs51.jpg', prix:8500, badge:'', note:5 },
+  { id:99, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs52.jpg', prix:8500, badge:'', note:5 },
+  { id:34, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums1.jpg', prix:5500, badge:'', note:5 },
+  { id:35, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums2.jpg', prix:5500, badge:'', note:5 },
+  { id:36, nom:'Parfum', cat:'parfums', icone:'🌹', photos:'images/parfums3.jpg', prix:4200, badge:'', note:4 },
+  { id:37, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums4.jpg', prix:5500, badge:'', note:5 },
+  { id:38, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums5.jpg', prix:5500, badge:'', note:5 },
+  { id:39, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums6.jpg', prix:5500, badge:'', note:5 },
+  { id:81, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums7.jpg', prix:5500, badge:'', note:5 },
+  { id:82, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums8.jpg', prix:5500, badge:'', note:5 },
+  { id:83, nom:'Parfum', cat:'parfums', icone:'🌹', photos:'images/parfums9.jpg', prix:4200, badge:'', note:4 },
+  { id:84, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums10.jpg', prix:5500, badge:'', note:5 },
+  { id:85, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums11.jpg', prix:5500, badge:'', note:5 },
+  { id:86, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums12.jpg', prix:5500, badge:'', note:5 },
+  { id:87, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums13.jpg', prix:5500, badge:'', note:5 },
+  { id:88, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums14.jpg', prix:5500, badge:'', note:5 },
+  { id:89, nom:'Parfum', cat:'parfums', icone:'🌹', photos:'images/parfums15.jpg', prix:4200, badge:'', note:4 },
+  { id:90, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums16.jpg', prix:5500, badge:'', note:5 },
+  { id:91, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums17.jpg', prix:5500, badge:'', note:5 },
+  { id:92, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums18.jpg', prix:5500, badge:'', note:5 },
+  { id:93, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums19.jpg', prix:5500, badge:'', note:5 },
+  { id:94, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums20.jpg', prix:5500, badge:'', note:5 },
+];
+
+/* ═══════════════════════════════════════════════════
+   ÉTAT
+════════════════════════════════════════════════════ */
+let produits = [];
+let filtreActuel = '';
+let catFiltreActuel = '';
+let idASupprimer = null;
+let toastTimer = null;
+
+/* ═══════════════════════════════════════════════════
+   CONNEXION
+════════════════════════════════════════════════════ */
+function seConnecter() {
+  const mdp = document.getElementById('mdpInput').value;
+  if (mdp === MOT_DE_PASSE) {
+    document.getElementById('ecranConnexion').style.display = 'none';
+    document.getElementById('adminApp').style.display = 'block';
+    chargerDonnees();
+  } else {
+    document.getElementById('loginErreur').classList.add('visible');
+    document.getElementById('mdpInput').value = '';
+    document.getElementById('mdpInput').focus();
+  }
+}
+
+function seDeconnecter() {
+  document.getElementById('adminApp').style.display = 'none';
+  document.getElementById('ecranConnexion').style.display = 'flex';
+  document.getElementById('mdpInput').value = '';
+  document.getElementById('loginErreur').classList.remove('visible');
+}
+
+/* ═══════════════════════════════════════════════════
+   CHARGEMENT DES DONNÉES (localStorage → défaut)
+════════════════════════════════════════════════════ */
+function chargerDonnees() {
+  try {
+    const sauvegarde = localStorage.getItem('ghreen_produits');
+    produits = sauvegarde ? JSON.parse(sauvegarde) : [...PRODUITS_INITIAUX];
+  } catch(e) {
+    produits = [...PRODUITS_INITIAUX];
+  }
+
+  // URL Sheets sauvegardée
+  const urlSheets = localStorage.getItem('ghreen_sheets_url');
+  if (urlSheets) document.getElementById('sheetsUrl').value = urlSheets;
+
+  mettreAJourStats();
+  rendreProduits();
+}
+
+function sauvegarderDonnees() {
+  localStorage.setItem('ghreen_produits', JSON.stringify(produits));
+}
+
+/* ═══════════════════════════════════════════════════
+   STATS
+════════════════════════════════════════════════════ */
+function mettreAJourStats() {
+  const cats = [...new Set(produits.map(p => p.cat))];
+  const prixMoy = produits.length ? Math.round(produits.reduce((s,p) => s+p.prix, 0) / produits.length) : 0;
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-carte"><div class="stat-icone">📦</div><div><div class="stat-val">${produits.length}</div><div class="stat-lib">Produits</div></div></div>
+    <div class="stat-carte"><div class="stat-icone">🗂</div><div><div class="stat-val">${cats.length}</div><div class="stat-lib">Catégories</div></div></div>
+    <div class="stat-carte"><div class="stat-icone">💰</div><div><div class="stat-val">${prixMoy.toLocaleString('fr-FR')}</div><div class="stat-lib">Prix moyen (FCFA)</div></div></div>
+    <div class="stat-carte"><div class="stat-icone">⭐</div><div><div class="stat-val">${produits.filter(p=>p.badge).length}</div><div class="stat-lib">Avec badge</div></div></div>
+  `;
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDU TABLE
+════════════════════════════════════════════════════ */
+function rendreProduits() {
+  let liste = [...produits];
+  if (filtreActuel) liste = liste.filter(p =>
+    p.nom.toLowerCase().includes(filtreActuel) ||
+    p.cat.toLowerCase().includes(filtreActuel)
+  );
+  if (catFiltreActuel) liste = liste.filter(p => p.cat === catFiltreActuel);
+
+  const tbody = document.getElementById('tableProduits');
+  if (liste.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gris);">Aucun produit trouvé</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = liste.map(p => `
+    <tr>
+      <td class="td-photo">
+        ${p.photos ? `<img src="${p.photos}" alt="${p.nom}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="no-photo" style="display:none;">${p.icone||'📦'}</div>` : `<div class="no-photo">${p.icone||'📦'}</div>`}
+      </td>
+      <td class="td-nom">${p.nom}</td>
+      <td><span class="td-cat">${p.cat}</span></td>
+      <td class="td-prix">${Number(p.prix).toLocaleString('fr-FR')} FCFA</td>
+      <td>${p.badge ? `<span class="td-badge">${p.badge}</span>` : '<span style="color:var(--gris);font-size:0.8rem;">—</span>'}</td>
+      <td>${'★'.repeat(Number(p.note)||5)}</td>
+      <td class="td-actions">
+        <button class="btn-edit" onclick="editerProduit(${p.id})">✏ Modifier</button>
+        <button class="btn-danger" onclick="demanderSuppression(${p.id}, '${p.nom.replace(/'/g,"\\'")}')">🗑</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function filtrerTable(val) { filtreActuel = val.toLowerCase(); rendreProduits(); }
+function filtrerParCat(val) { catFiltreActuel = val; rendreProduits(); }
+
+/* ═══════════════════════════════════════════════════
+   FORMULAIRE AJOUT / MODIFICATION
+════════════════════════════════════════════════════ */
+function reinitialiserForm() {
+  document.getElementById('editId').value = '';
+  document.getElementById('fNom').value = '';
+  document.getElementById('fCat').value = '';
+  document.getElementById('fPrix').value = '';
+  document.getElementById('fBadge').value = '';
+  document.getElementById('fNote').value = '5';
+  document.getElementById('fIcone').value = '';
+  document.getElementById('fPhoto').value = '';
+  document.getElementById('formTitre').innerHTML = 'Ajouter un <span>produit</span>';
+}
+
+function editerProduit(id) {
+  const p = produits.find(x => x.id === id);
+  if (!p) return;
+  changerTab('ajouter', document.querySelectorAll('.tab')[1]);
+  document.getElementById('editId').value = p.id;
+  document.getElementById('fNom').value = p.nom;
+  document.getElementById('fCat').value = p.cat;
+  document.getElementById('fPrix').value = p.prix;
+  document.getElementById('fBadge').value = p.badge || '';
+  document.getElementById('fNote').value = p.note || '5';
+  document.getElementById('fIcone').value = p.icone || '';
+  document.getElementById('fPhoto').value = p.photos || '';
+  document.getElementById('formTitre').innerHTML = `Modifier le <span>produit</span>`;
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function sauvegarderProduit() {
+  const nom   = document.getElementById('fNom').value.trim();
+  const cat   = document.getElementById('fCat').value;
+  const prix  = parseInt(document.getElementById('fPrix').value);
+  const badge = document.getElementById('fBadge').value;
+  const note  = parseInt(document.getElementById('fNote').value);
+  const icone = document.getElementById('fIcone').value.trim() || '📦';
+  const photo = document.getElementById('fPhoto').value.trim();
+  const editId= document.getElementById('editId').value;
+
+  if (!nom) { toast('⚠ Entrez le nom du produit', 'erreur'); return; }
+  if (!cat) { toast('⚠ Choisissez une catégorie', 'erreur'); return; }
+  if (!prix || prix <= 0) { toast('⚠ Entrez un prix valide', 'erreur'); return; }
+
+  if (editId) {
+    const idx = produits.findIndex(p => p.id === parseInt(editId));
+    if (idx >= 0) {
+      produits[idx] = { ...produits[idx], nom, cat, prix, badge, note, icone, photos: photo };
+      toast('✅ Produit modifié avec succès !', 'succes');
+    }
+  } else {
+    const maxId = produits.length ? Math.max(...produits.map(p => p.id)) : 0;
+    produits.push({ id: maxId + 1, nom, cat, prix, badge, note, icone, photos: photo });
+    toast('✅ Produit ajouté avec succès !', 'succes');
+  }
+
+  sauvegarderDonnees();
+  mettreAJourStats();
+  reinitialiserForm();
+  changerTab('produits', document.querySelectorAll('.tab')[0]);
+  rendreProduits();
+}
+
+/* ═══════════════════════════════════════════════════
+   SUPPRESSION
+════════════════════════════════════════════════════ */
+function demanderSuppression(id, nom) {
+  idASupprimer = id;
+  document.getElementById('confirmMsg').textContent = `Voulez-vous vraiment supprimer "${nom}" ? Cette action est irréversible.`;
+  document.getElementById('modalConfirm').classList.add('actif');
+}
+function fermerConfirm() {
+  idASupprimer = null;
+  document.getElementById('modalConfirm').classList.remove('actif');
+}
+function confirmerSuppression() {
+  if (!idASupprimer) return;
+  produits = produits.filter(p => p.id !== idASupprimer);
+  sauvegarderDonnees();
+  mettreAJourStats();
+  rendreProduits();
+  fermerConfirm();
+  toast('🗑 Produit supprimé', 'succes');
+}
+
+/* ═══════════════════════════════════════════════════
+   GOOGLE SHEETS
+════════════════════════════════════════════════════ */
+function sauvegarderSheetsUrl() {
+  const url = document.getElementById('sheetsUrl').value.trim();
+  if (!url.includes('docs.google.com')) { toast('⚠ URL Google Sheets invalide', 'erreur'); return; }
+  localStorage.setItem('ghreen_sheets_url', url);
+  toast('✅ URL Sheets sauvegardée !', 'succes');
+}
+
+async function testerSheets() {
+  const url = document.getElementById('sheetsUrl').value.trim();
+  const statut = document.getElementById('sheetsStatut');
+  if (!url) { toast('⚠ Entrez d\'abord l\'URL', 'erreur'); return; }
+  statut.style.display = 'block';
+  statut.style.background = '#fff9c4';
+  statut.style.border = '1px solid #f9a825';
+  statut.textContent = '⏳ Test de connexion en cours...';
+  try {
+    const res = await fetch(url);
+    if (res.ok) {
+      const txt = await res.text();
+      const lignes = txt.split('\n').filter(l => l.trim()).length;
+      statut.style.background = '#e8f5e9';
+      statut.style.border = '1px solid #27ae60';
+      statut.textContent = `✅ Connexion réussie ! ${lignes - 1} produit(s) trouvé(s) dans le Sheet.`;
+    } else {
+      throw new Error('Réponse non OK');
+    }
+  } catch(e) {
+    statut.style.background = '#ffebee';
+    statut.style.border = '1px solid #e53935';
+    statut.textContent = '❌ Impossible de lire le Sheet. Vérifiez que le document est bien publié (Fichier → Publier sur le web → CSV).';
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   EXPORT
+════════════════════════════════════════════════════ */
+function exporterCSV() {
+  const entete = 'id,nom,cat,prix,badge,note,icone,photos\n';
+  const lignes = produits.map(p =>
+    `${p.id},"${p.nom}","${p.cat}",${p.prix},"${p.badge||''}",${p.note},"${p.icone||''}","${p.photos||''}"`
+  ).join('\n');
+  const blob = new Blob([entete + lignes], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ghreen_produits.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('📥 Fichier CSV téléchargé !', 'succes');
+}
+
+function exporterJSON() {
+  const json = 'const PRODUITS = ' + JSON.stringify(produits.map(p => ({
+    ...p, photos: [p.photos]
+  })), null, 2) + ';';
+  document.getElementById('jsonZone').style.display = 'block';
+  document.getElementById('jsonContenu').value = json;
+}
+
+function copierJSON() {
+  const ta = document.getElementById('jsonContenu');
+  ta.select();
+  document.execCommand('copy');
+  toast('📋 JSON copié ! Colle-le dans index.html', 'succes');
+}
+
+/* ═══════════════════════════════════════════════════
+   TABS
+════════════════════════════════════════════════════ */
+function changerTab(nom, btn) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('actif'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('actif'));
+  if (btn) btn.classList.add('actif');
+  const el = document.getElementById('tab-' + nom);
+  if (el) el.classList.add('actif');
+  if (nom === 'produits') rendreProduits();
+}
+
+/* ═══════════════════════════════════════════════════
+   TOAST
+════════════════════════════════════════════════════ */
+function toast(msg, type = '') {
+  const t = document.getElementById('adminToast');
+  t.textContent = msg;
+  t.className = 'visible ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = ''; }, 3500);
+}
+</script>
+</body>
+</html>
