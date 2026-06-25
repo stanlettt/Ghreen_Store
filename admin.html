@@ -308,248 +308,231 @@ tr:hover td { background: var(--fond-2); }
   th, td { padding: 0.5rem 0.6rem; }
   .td-photo, .td-actions { min-width: auto; }
 }
+
+
+/* ── GRILLE ADMIN ── */
+#grille-admin {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+  padding: 1.5rem;
+}
+.produit-admin-carte {
+  background: #fff;
+  border: 1px solid rgba(194,24,91,0.12);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--ombre-douce);
+  transition: var(--transition);
+  display: flex;
+  flex-direction: column;
+}
+.produit-admin-carte:hover { transform: translateY(-3px); box-shadow: var(--ombre); }
+.produit-admin-img-wrap {
+  position: relative; aspect-ratio: 1/1; overflow: hidden; background: var(--fond-2);
+}
+.produit-admin-img-wrap img {
+  width: 100%; height: 100%; object-fit: cover; display: block; transition: var(--transition);
+}
+.produit-admin-carte:hover .produit-admin-img-wrap img { transform: scale(1.05); }
+.badge-admin {
+  position: absolute; top: 0.5rem; left: 0.5rem;
+  background: var(--rose); color: #fff;
+  font-size: 0.65rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.25rem 0.6rem; border-radius: 50px;
+}
+.produit-admin-info { padding: 0.8rem 1rem 0.5rem; flex: 1; }
+.produit-admin-nom { font-family: var(--font-titre); font-size: 1.05rem; font-weight: 600; color: var(--texte); }
+.produit-admin-cat { font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gris); margin-top: 0.2rem; }
+.produit-admin-prix { font-size: 0.9rem; font-weight: 600; color: var(--rose); margin-top: 0.4rem; }
+.produit-admin-actions { display: flex; gap: 0.5rem; padding: 0.8rem 1rem; background: var(--fond-2); }
+.btn-modifier {
+  flex: 1; padding: 0.6rem; background: var(--rose); color: #fff;
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  font-family: var(--font-corps); font-size: 0.75rem; font-weight: 500;
+  transition: var(--transition);
+}
+.btn-modifier:hover { background: var(--rose-fonce); }
+.btn-supprimer {
+  flex: 1; padding: 0.6rem; background: transparent; color: var(--rouge);
+  border: 1.5px solid var(--rouge); border-radius: var(--radius-sm); cursor: pointer;
+  font-family: var(--font-corps); font-size: 0.75rem; font-weight: 500;
+  transition: var(--transition);
+}
+.btn-supprimer:hover { background: var(--rouge); color: #fff; }
+
+/* ── MODAL ÉDITION ── */
+#modal-edition {
+  display: none; position: fixed; inset: 0; z-index: 9000;
+  align-items: center; justify-content: center;
+  background: rgba(42,26,32,0.5); backdrop-filter: blur(4px);
+}
+.modal-boite {
+  background: #fff; border-radius: var(--radius); padding: 2rem;
+  width: 90%; max-width: 540px; max-height: 90vh; overflow-y: auto;
+  box-shadow: var(--ombre);
+}
+.modal-titre {
+  font-family: var(--font-titre); font-size: 1.6rem; font-weight: 300;
+  color: var(--rose); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.5rem;
+}
+.modal-badge-id {
+  font-size: 0.72rem; background: var(--rose-pale); color: var(--rose-fonce);
+  padding: 0.2rem 0.6rem; border-radius: 50px; font-family: var(--font-corps);
+}
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.modal-grid .fg-full { grid-column: 1 / -1; }
+.fg label { display: block; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--rose-fonce); font-weight: 500; margin-bottom: 0.4rem; }
+.fg input, .fg select, .fg textarea {
+  width: 100%; padding: 0.7rem 0.9rem;
+  border: 1.5px solid rgba(194,24,91,0.2); border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.88rem; color: var(--texte);
+  background: var(--fond-2); outline: none; transition: var(--transition);
+}
+.fg input:focus, .fg select:focus { border-color: var(--rose); background: #fce4ec; }
+.modal-actions { display: flex; gap: 0.8rem; margin-top: 1.5rem; }
+
+/* ── STATS ── */
+#stats-admin { display: flex; gap: 1rem; padding: 1.5rem; flex-wrap: wrap; }
+.stat-carte { background: #fff; border: 1px solid rgba(194,24,91,0.1); border-radius: var(--radius); padding: 1.2rem 1.5rem; display: flex; align-items: center; gap: 1rem; flex: 1; min-width: 140px; box-shadow: var(--ombre-douce); }
+.stat-icone { font-size: 1.8rem; }
+.stat-val { font-size: 1.6rem; font-weight: 700; color: var(--rose); font-family: var(--font-titre); }
+.stat-lib { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--texte-doux); }
+
+/* ── TOOLBAR ── */
+.toolbar-admin { display: flex; align-items: center; gap: 1rem; padding: 0 1.5rem 1rem; flex-wrap: wrap; }
+.toolbar-admin input {
+  flex: 1; min-width: 200px; padding: 0.7rem 1rem;
+  border: 1.5px solid rgba(194,24,91,0.2); border-radius: var(--radius-sm);
+  font-family: var(--font-corps); font-size: 0.88rem; color: var(--texte); background: var(--fond-2); outline: none;
+}
+.toolbar-admin input:focus { border-color: var(--rose); }
+
+@media (max-width: 600px) {
+  #grille-admin { grid-template-columns: 1fr 1fr; gap: 0.8rem; padding: 1rem; }
+  .modal-grid { grid-template-columns: 1fr; }
+  #stats-admin { gap: 0.6rem; }
+  .stat-carte { padding: 0.8rem 1rem; min-width: 100px; }
+}
+
 </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════
-     ÉCRAN DE CONNEXION
-════════════════════════════════════════════════════ -->
+<!-- ── ÉCRAN CONNEXION ── -->
 <div id="ecranConnexion">
   <div class="login-boite">
-    <div class="login-logo">Ghreen<span>_Store</span></div>
-    <div class="login-sous">Espace Administrateur</div>
-    <input type="password" id="mdpInput" placeholder="••••••••••••" onkeydown="if(event.key==='Enter')seConnecter()" />
-    <div class="login-erreur" id="loginErreur">Mot de passe incorrect. Réessayez.</div>
-    <button class="btn-rose" style="width:100%;padding:0.9rem;" onclick="seConnecter()">Se connecter →</button>
-    <p style="margin-top:1.5rem;font-size:0.72rem;color:var(--gris);">Accès réservé à la propriétaire de Ghreen_Store</p>
+    <div class="login-logo">Ghreen<span>_</span>Store</div>
+    <div class="login-sous">Administration</div>
+    <input type="password" id="champMdp" placeholder="Mot de passe" autocomplete="current-password" />
+    <div class="login-erreur" id="erreurMdp"></div>
+    <button class="btn-connexion btn-rose" style="width:100%;padding:0.9rem;font-size:0.85rem;letter-spacing:0.1em;" onclick="seConnecter()">Se connecter</button>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════
-     APPLICATION ADMIN
-════════════════════════════════════════════════════ -->
-<div id="adminApp">
-
-  <!-- Header -->
+<!-- ── APP ADMIN ── -->
+<div id="adminApp" style="display:none;">
   <div class="admin-header">
     <div class="admin-header-logo">Ghreen<span>_Store</span></div>
     <div class="admin-header-right">
-      <span class="admin-badge">⚙ Administration</span>
+      <span class="admin-badge">Admin</span>
       <button class="btn-deconnexion" onclick="seDeconnecter()">Déconnexion</button>
     </div>
   </div>
 
   <div class="admin-main">
-
     <!-- Stats -->
-    <div class="stats-grid" id="statsGrid"></div>
+    <div id="stats-admin"></div>
 
-    <!-- Tabs -->
-    <div class="tabs">
-      <button class="tab actif" onclick="changerTab('produits', this)">📦 Produits</button>
-      <button class="tab" onclick="changerTab('ajouter', this)">➕ Ajouter un produit</button>
-      <button class="tab" onclick="changerTab('sheets', this)">🔗 Google Sheets</button>
-      <button class="tab" onclick="changerTab('export', this)">💾 Exporter</button>
+    <!-- Toolbar -->
+    <div class="toolbar-admin">
+      <input type="text" id="recherche-admin" placeholder="🔍 Rechercher un produit..." oninput="rendreProduits()" />
+      <button class="btn-rose" onclick="ouvrirAjout()" style="white-space:nowrap;padding:0.7rem 1.4rem;font-size:0.82rem;">➕ Ajouter un produit</button>
     </div>
 
-    <!-- TAB : Liste des produits -->
-    <div class="tab-content actif" id="tab-produits">
-      <div class="table-wrap">
-        <div class="table-top">
-          <h2 class="section-titre-admin" style="margin:0;font-size:1.3rem;">Tous les <span>produits</span></h2>
-          <div style="display:flex;gap:0.8rem;align-items:center;flex-wrap:wrap;">
-            <input class="table-recherche" type="text" placeholder="🔍 Rechercher..." oninput="filtrerTable(this.value)" />
-            <select onchange="filtrerParCat(this.value)" style="border:1.5px solid rgba(194,24,91,0.2);border-radius:var(--radius-sm);padding:0.5rem 0.8rem;font-family:var(--font-corps);font-size:0.82rem;background:var(--fond-2);color:var(--texte);outline:none;">
-              <option value="">Toutes catégories</option>
-              <option value="stanley">Stanley</option>
-              <option value="bijoux">Bijoux</option>
-              <option value="babouches">Babouches</option>
-              <option value="sacs">Sacs</option>
-              <option value="parfums">Parfums</option>
-              <option value="perruques">Perruques</option>
-            </select>
-          </div>
-        </div>
-        <div style="overflow-x:auto;">
-          <table id="tableProduitsEl">
-            <thead>
-              <tr>
-                <th>Photo</th>
-                <th>Nom</th>
-                <th>Catégorie</th>
-                <th>Prix</th>
-                <th>Badge</th>
-                <th>Note</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="tableProduits"></tbody>
-          </table>
-        </div>
+    <!-- Grille produits -->
+    <div id="grille-admin"></div>
+  </div>
+</div>
+
+<!-- ── MODAL ÉDITION ── -->
+<div id="modal-edition">
+  <div class="modal-boite">
+    <div class="modal-titre">
+      ✏️ Produit
+      <span class="modal-badge-id" id="edit-id"></span>
+    </div>
+    <div class="modal-grid">
+      <div class="fg">
+        <label>Nom du produit *</label>
+        <input type="text" id="edit-nom" placeholder="Ex : Sac à main" />
+      </div>
+      <div class="fg">
+        <label>Catégorie *</label>
+        <select id="edit-cat">
+          <option value="stanley">Gourdes Stanley</option>
+          <option value="bijoux">Bijoux & Accessoires</option>
+          <option value="babouches">Babouches</option>
+          <option value="sacs">Sacs</option>
+          <option value="parfums">Parfums</option>
+          <option value="perruques">Perruques & Tissages</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Prix (FCFA) *</label>
+        <input type="number" id="edit-prix" placeholder="Ex : 8500" min="0" />
+      </div>
+      <div class="fg">
+        <label>Badge</label>
+        <select id="edit-badge">
+          <option value="">Aucun</option>
+          <option value="Nouveau">Nouveau</option>
+          <option value="Luxe">Luxe</option>
+          <option value="Promo">Promo</option>
+          <option value="Bestseller">Bestseller</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Note (1 à 5)</label>
+        <select id="edit-note">
+          <option value="5">⭐⭐⭐⭐⭐</option>
+          <option value="4">⭐⭐⭐⭐</option>
+          <option value="3">⭐⭐⭐</option>
+          <option value="2">⭐⭐</option>
+          <option value="1">⭐</option>
+        </select>
+      </div>
+      <div class="fg">
+        <label>Icône emoji</label>
+        <input type="text" id="edit-icone" placeholder="Ex : 👜" maxlength="4" />
+      </div>
+      <div class="fg fg-full">
+        <label>Chemin de la photo</label>
+        <input type="text" id="edit-photos" placeholder="Ex : images/sacs53.jpg" />
+        <small style="color:var(--gris);font-size:0.72rem;display:block;margin-top:0.3rem;">💡 Mettez d'abord l'image dans le dossier &quot;images/&quot; sur GitHub, puis écrivez le chemin ici.</small>
       </div>
     </div>
-
-    <!-- TAB : Ajouter / Modifier -->
-    <div class="tab-content" id="tab-ajouter">
-      <h2 class="section-titre-admin" id="formTitre">Ajouter un <span>produit</span></h2>
-      <div class="form-admin">
-        <input type="hidden" id="editId" value="" />
-        <div class="form-grid">
-          <div class="fg">
-            <label>Nom du produit *</label>
-            <input type="text" id="fNom" placeholder="Ex : Sac à main luxe" />
-          </div>
-          <div class="fg">
-            <label>Catégorie *</label>
-            <select id="fCat">
-              <option value="">-- Choisir --</option>
-              <option value="stanley">Gourdes Stanley</option>
-              <option value="bijoux">Bijoux & Accessoires</option>
-              <option value="babouches">Babouches</option>
-              <option value="sacs">Sacs</option>
-              <option value="parfums">Parfums</option>
-              <option value="perruques">Perruques & Tissages</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label>Prix (FCFA) *</label>
-            <input type="number" id="fPrix" placeholder="Ex : 8500" min="0" />
-          </div>
-          <div class="fg">
-            <label>Badge</label>
-            <select id="fBadge">
-              <option value="">Aucun</option>
-              <option value="Nouveau">Nouveau</option>
-              <option value="Luxe">Luxe</option>
-              <option value="Promo">Promo</option>
-              <option value="Bestseller">Bestseller</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label>Note (1 à 5)</label>
-            <select id="fNote">
-              <option value="5">⭐⭐⭐⭐⭐ — 5</option>
-              <option value="4">⭐⭐⭐⭐ — 4</option>
-              <option value="3">⭐⭐⭐ — 3</option>
-              <option value="2">⭐⭐ — 2</option>
-              <option value="1">⭐ — 1</option>
-            </select>
-          </div>
-          <div class="fg">
-            <label>Icône emoji</label>
-            <input type="text" id="fIcone" placeholder="Ex : 👜" maxlength="4" />
-          </div>
-          <div class="fg fg-full">
-            <label>Chemin de la photo (dans le dossier images/)</label>
-            <input type="text" id="fPhoto" placeholder="Ex : images/sacs53.jpg" />
-            <small style="color:var(--gris);font-size:0.72rem;margin-top:0.3rem;">💡 Mettez d'abord l'image dans votre dossier "images/" sur GitHub, puis écrivez le chemin ici.</small>
-          </div>
-        </div>
-        <div class="form-actions">
-          <button class="btn-rose" onclick="sauvegarderProduit()">💾 Sauvegarder le produit</button>
-          <button class="btn-outline-admin" onclick="reinitialiserForm()">✕ Annuler</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB : Google Sheets -->
-    <div class="tab-content" id="tab-sheets">
-      <h2 class="section-titre-admin">Connexion <span>Google Sheets</span></h2>
-      <div class="sheets-setup">
-        <p style="color:var(--texte-doux);font-size:0.9rem;line-height:1.7;margin-bottom:1rem;">
-          Connectez un Google Sheet pour sauvegarder vos produits en ligne. Ainsi, même si vous videz le cache de votre navigateur, vos produits sont toujours disponibles.
-        </p>
-        <div class="sheets-etapes">
-          <div class="sheets-etape">
-            <div class="etape-num">1</div>
-            <div class="etape-txt">
-              <strong>Créez un Google Sheet</strong> sur <a href="https://sheets.google.com" target="_blank" style="color:var(--rose);">sheets.google.com</a> et nommez-le <code>Ghreen_Store_Produits</code>
-            </div>
-          </div>
-          <div class="sheets-etape">
-            <div class="etape-num">2</div>
-            <div class="etape-txt">
-              <strong>Ajoutez ces colonnes en ligne 1 :</strong><br>
-              <code>id</code> &nbsp;|&nbsp; <code>nom</code> &nbsp;|&nbsp; <code>cat</code> &nbsp;|&nbsp; <code>prix</code> &nbsp;|&nbsp; <code>badge</code> &nbsp;|&nbsp; <code>note</code> &nbsp;|&nbsp; <code>icone</code> &nbsp;|&nbsp; <code>photos</code>
-            </div>
-          </div>
-          <div class="sheets-etape">
-            <div class="etape-num">3</div>
-            <div class="etape-txt">
-              <strong>Publiez le Sheet :</strong> Fichier → Partager → Publier sur le web → Feuille 1 → Format CSV → Publier. Copiez le lien.
-            </div>
-          </div>
-          <div class="sheets-etape">
-            <div class="etape-num">4</div>
-            <div class="etape-txt">
-              <strong>Collez le lien CSV ici :</strong>
-              <div class="url-input-wrap">
-                <input type="url" id="sheetsUrl" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv" />
-                <button class="btn-rose" onclick="sauvegarderSheetsUrl()">Connecter</button>
-                <button class="btn-outline-admin" onclick="testerSheets()">Tester</button>
-              </div>
-            </div>
-          </div>
-          <div class="sheets-etape">
-            <div class="etape-num">5</div>
-            <div class="etape-txt">
-              <strong>Exportez vos produits actuels vers Sheets</strong> en cliquant sur l'onglet "Exporter".
-            </div>
-          </div>
-        </div>
-        <div id="sheetsStatut" style="display:none;padding:1rem;border-radius:var(--radius-sm);font-size:0.85rem;margin-top:1rem;"></div>
-      </div>
-    </div>
-
-    <!-- TAB : Export -->
-    <div class="tab-content" id="tab-export">
-      <h2 class="section-titre-admin">Exporter les <span>produits</span></h2>
-      <div class="sheets-setup">
-        <p style="color:var(--texte-doux);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem;">
-          Exportez vos produits pour les sauvegarder ou les importer dans Google Sheets.
-        </p>
-        <div style="display:flex;gap:1rem;flex-wrap:wrap;">
-          <button class="btn-rose" onclick="exporterCSV()">📥 Télécharger en CSV (pour Google Sheets)</button>
-          <button class="btn-outline-admin" onclick="exporterJSON()">📋 Copier le JSON (pour index.html)</button>
-        </div>
-        <div id="jsonZone" style="display:none;margin-top:1.5rem;">
-          <label style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--rose-fonce);font-weight:500;display:block;margin-bottom:0.5rem;">JSON à coller dans index.html (remplace const PRODUITS = [...])</label>
-          <textarea id="jsonContenu" style="width:100%;height:200px;font-family:monospace;font-size:0.78rem;padding:1rem;border:1.5px solid rgba(194,24,91,0.2);border-radius:var(--radius-sm);background:var(--fond-2);color:var(--texte);resize:vertical;" readonly></textarea>
-          <button class="btn-vert" style="margin-top:0.8rem;" onclick="copierJSON()">📋 Copier</button>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /admin-main -->
-</div><!-- /adminApp -->
-
-<!-- Modal confirmation suppression -->
-<div class="modal-confirm" id="modalConfirm">
-  <div class="modal-confirm-boite">
-    <h3>⚠ Supprimer le produit ?</h3>
-    <p id="confirmMsg">Cette action est irréversible.</p>
-    <div class="modal-confirm-actions">
-      <button class="btn-outline-admin" onclick="fermerConfirm()">Annuler</button>
-      <button class="btn-danger" style="padding:0.75rem 2rem;font-size:0.78rem;" onclick="confirmerSuppression()">Supprimer</button>
+    <div class="modal-actions">
+      <button class="btn-rose" onclick="sauvegarderProduit()" style="flex:1;padding:0.85rem;">💾 Sauvegarder</button>
+      <button class="btn-outline-admin" onclick="fermerModal()" style="padding:0.85rem 1.5rem;">Annuler</button>
     </div>
   </div>
 </div>
 
-<div id="adminToast"></div>
-
 <script>
 /* ═══════════════════════════════════════════════════
-   DONNÉES INITIALES (produits existants du site)
+   JSONBIN CONFIG
 ════════════════════════════════════════════════════ */
-const MOT_DE_PASSE = 'Ghreen2026@Store';
+const MOT_DE_PASSE    = 'Ghreen2026@Store';
+const JSONBIN_API_KEY = '$2a$10$Shaara62aAtCwS1akXMMD.5wmCRQBUPy4QAaOMcN85vaP2lV31d96';
+const JSONBIN_BIN_ID  = '6a3c4a21f5f4af5e292b3a3b';
 
 const PRODUITS_INITIAUX = [
-  { id:1,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements1.jpg', prix:4500, badge:'Nouveau', note:5 },
-  { id:2,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements2.jpg', prix:4500, badge:'Nouveau', note:5 },
-  { id:3,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements3.jpg', prix:4500, badge:'Nouveau', note:5 },
-  { id:4,  nom:'Caftan', cat:'bijoux', icone:'✨', photos:'images/vetements4.jpg', prix:15000, badge:'Luxe', note:5 },
-  { id:5,  nom:'Djellaba', cat:'bijoux', icone:'🧕', photos:'images/vetements5.jpg', prix:8900, badge:'', note:5 },
+  { id:1,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements1.jpg', prix:8500, badge:'Nouveau', note:5 },
+  { id:2,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements2.jpg', prix:6500, badge:'Nouveau', note:5 },
+  { id:3,  nom:'Baya', cat:'bijoux', icone:'👗', photos:'images/vetements3.jpg', prix:8500, badge:'Nouveau', note:5 },
+  { id:4,  nom:'Caftan', cat:'bijoux', icone:'✨', photos:'images/vetements4.jpg', prix:9000, badge:'Luxe', note:5 },
+  { id:5,  nom:'Djellaba', cat:'bijoux', icone:'🧕', photos:'images/vetements5.jpg', prix:8500, badge:'', note:5 },
   { id:6,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley1.jpg', prix:18000, badge:'', note:5 },
   { id:7,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley2.jpg', prix:18000, badge:'Nouveau', note:5 },
   { id:8,  nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley3.jpg', prix:16000, badge:'', note:5 },
@@ -558,29 +541,27 @@ const PRODUITS_INITIAUX = [
   { id:11, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley6.jpg', prix:16000, badge:'', note:5 },
   { id:12, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley7.jpg', prix:16000, badge:'', note:5 },
   { id:13, nom:'Gourde Stanley', cat:'stanley', icone:'🥤', photos:'images/stanley8.jpg', prix:16000, badge:'', note:4 },
-  { id:14, nom:'Collier', cat:'bijoux', icone:'💎', photos:'images/bijoux1.jpg', prix:12000, badge:'', note:4 },
-  { id:15, nom:'Bracelet', cat:'bijoux', icone:'💛', photos:'images/bijoux2.jpg', prix:3200, badge:'', note:4 },
-  { id:16, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux4.jpg', prix:6800, badge:'', note:5 },
-  { id:17, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux5.jpg', prix:6800, badge:'', note:5 },
-  { id:18, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux6.jpg', prix:6800, badge:'', note:5 },
-  { id:19, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux7.jpg', prix:6800, badge:'', note:5 },
-  { id:20, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux8.jpg', prix:6800, badge:'', note:5 },
-  { id:21, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux9.jpg', prix:6800, badge:'', note:5 },
-  { id:22, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux10.jpg', prix:6800, badge:'', note:5 },
-  { id:101, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux11.jpg', prix:6800, badge:'', note:5 },
-  { id:102, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux12.jpg', prix:6800, badge:'', note:5 },
-  { id:103, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux13.jpg', prix:6800, badge:'', note:5 },
-  { id:104, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux14.jpg', prix:6800, badge:'', note:5 },
-  { id:105, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux15.jpg', prix:6800, badge:'', note:5 },
-  { id:23, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches1.jpg', prix:2800, badge:'', note:5 },
-  { id:24, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches2.jpg', prix:2800, badge:'', note:5 },
-  { id:25, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches3.jpg', prix:2800, badge:'', note:5 },
-  { id:26, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches4.jpg', prix:2800, badge:'', note:5 },
-  { id:27, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches5.jpg', prix:2800, badge:'', note:5 },
-  { id:28, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches6.jpg', prix:2800, badge:'', note:5 },
-  { id:107, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches7.jpg', prix:2800, badge:'', note:5 },
-  { id:108, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches8.jpg', prix:2800, badge:'', note:5 },
-  { id:109, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches9.jpg', prix:2800, badge:'', note:5 },
+  { id:14, nom:'Collier', cat:'bijoux', icone:'💎', photos:'images/bijoux1.jpg', prix:20000, badge:'', note:4 },
+  { id:15, nom:'Bracelet', cat:'bijoux', icone:'💛', photos:'images/bijoux2.jpg', prix:26000, badge:'', note:4 },
+  { id:16, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux4.jpg', prix:15000, badge:'', note:5 },
+  { id:17, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux5.jpg', prix:16000, badge:'', note:5 },
+  { id:18, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux6.jpg', prix:16000, badge:'', note:5 },
+  { id:19, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux7.jpg', prix:35000, badge:'', note:5 },
+  { id:20, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux8.jpg', prix:35000, badge:'', note:5 },
+  { id:21, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux9.jpg', prix:30000, badge:'', note:5 },
+  { id:22, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux10.jpg', prix:16000, badge:'', note:5 },
+  { id:101, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux11.jpg', prix:27000, badge:'', note:5 },
+  { id:103, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux13.jpg', prix:35000, badge:'', note:5 },
+  { id:105, nom:'Montre', cat:'bijoux', icone:'⌚', photos:'images/bijoux15.jpg', prix:30000, badge:'', note:5 },
+  { id:23, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches1.jpg', prix:18000, badge:'', note:5 },
+  { id:24, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches2.jpg', prix:15000, badge:'', note:5 },
+  { id:25, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches3.jpg', prix:25000, badge:'', note:5 },
+  { id:26, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches4.jpg', prix:20000, badge:'', note:5 },
+  { id:27, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches5.jpg', prix:18000, badge:'', note:5 },
+  { id:28, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches6.jpg', prix:18000, badge:'', note:5 },
+  { id:107, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches7.jpg', prix:17000, badge:'', note:5 },
+  { id:108, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches8.jpg', prix:16000, badge:'', note:5 },
+  { id:109, nom:'Babouche', cat:'babouches', icone:'🥿', photos:'images/babouches9.jpg', prix:18000, badge:'', note:5 },
   { id:29, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs1.jpg', prix:8500, badge:'', note:4 },
   { id:30, nom:'Sac', cat:'sacs', icone:'👜', photos:'images/sacs2.jpg', prix:8500, badge:'', note:4 },
   { id:31, nom:'Sac', cat:'sacs', icone:'🎀', photos:'images/sacs3.jpg', prix:6200, badge:'Nouveau', note:5 },
@@ -655,287 +636,255 @@ const PRODUITS_INITIAUX = [
   { id:94, nom:'Parfum', cat:'parfums', icone:'🌸', photos:'images/parfums20.jpg', prix:5500, badge:'', note:5 },
 ];
 
-/* ═══════════════════════════════════════════════════
-   ÉTAT
-════════════════════════════════════════════════════ */
 let produits = [];
-let filtreActuel = '';
-let catFiltreActuel = '';
-let idASupprimer = null;
-let toastTimer = null;
+let editId   = null;
+
+/* ═══════════════════════════════════════════════════
+   JSONBIN
+════════════════════════════════════════════════════ */
+async function jsonBinGet() {
+  const rep = await fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID + '/latest', {
+    headers: { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' }
+  });
+  if (!rep.ok) throw new Error('Erreur JSONBin: ' + rep.status);
+  const data = await rep.json();
+  return Array.isArray(data) ? data : [];
+}
+
+async function jsonBinSet(donnees) {
+  const rep = await fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_API_KEY },
+    body: JSON.stringify(donnees)
+  });
+  if (!rep.ok) throw new Error('Erreur sauvegarde: ' + rep.status);
+  return true;
+}
+
+/* ═══════════════════════════════════════════════════
+   NOTIFICATION
+════════════════════════════════════════════════════ */
+function notif(msg, type) {
+  type = type || 'succes';
+  let n = document.getElementById('notif-admin');
+  if (!n) {
+    n = document.createElement('div');
+    n.id = 'notif-admin';
+    n.style.cssText = 'position:fixed;top:1.5rem;right:1.5rem;z-index:9999;padding:1rem 1.5rem;border-radius:12px;font-family:Montserrat,sans-serif;font-size:0.85rem;font-weight:500;box-shadow:0 8px 30px rgba(0,0,0,0.15);transition:opacity 0.3s;max-width:320px;';
+    document.body.appendChild(n);
+  }
+  n.style.background = type === 'succes' ? '#27ae60' : '#e53935';
+  n.style.color = '#fff';
+  n.textContent = msg;
+  n.style.display = 'block';
+  n.style.opacity = '1';
+  setTimeout(function(){ n.style.opacity = '0'; setTimeout(function(){ n.style.display = 'none'; }, 300); }, 3500);
+}
 
 /* ═══════════════════════════════════════════════════
    CONNEXION
 ════════════════════════════════════════════════════ */
 function seConnecter() {
-  const mdp = document.getElementById('mdpInput').value;
+  const mdp = document.getElementById('champMdp').value;
   if (mdp === MOT_DE_PASSE) {
     document.getElementById('ecranConnexion').style.display = 'none';
     document.getElementById('adminApp').style.display = 'block';
     chargerDonnees();
   } else {
-    document.getElementById('loginErreur').classList.add('visible');
-    document.getElementById('mdpInput').value = '';
-    document.getElementById('mdpInput').focus();
+    const err = document.getElementById('erreurMdp');
+    if (err) { err.textContent = 'Mot de passe incorrect'; err.classList.add('visible'); }
   }
 }
 
 function seDeconnecter() {
   document.getElementById('adminApp').style.display = 'none';
   document.getElementById('ecranConnexion').style.display = 'flex';
-  document.getElementById('mdpInput').value = '';
-  document.getElementById('loginErreur').classList.remove('visible');
+  document.getElementById('champMdp').value = '';
 }
 
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && document.activeElement && document.activeElement.id === 'champMdp') seConnecter();
+});
+
 /* ═══════════════════════════════════════════════════
-   CHARGEMENT DES DONNÉES (localStorage → défaut)
+   CHARGEMENT
 ════════════════════════════════════════════════════ */
-function chargerDonnees() {
+async function chargerDonnees() {
+  const grille = document.getElementById('grille-admin');
+  if (grille) grille.innerHTML = '<div style="text-align:center;padding:3rem;color:#c2185b;font-family:Montserrat,sans-serif;">Chargement depuis JSONBin...</div>';
   try {
-    const sauvegarde = localStorage.getItem('ghreen_produits');
-    produits = sauvegarde ? JSON.parse(sauvegarde) : [...PRODUITS_INITIAUX];
+    const data = await jsonBinGet();
+    if (data.length > 0) {
+      produits = data;
+      notif('Produits chargés depuis JSONBin (' + produits.length + ' produits)');
+    } else {
+      produits = PRODUITS_INITIAUX.slice();
+      await jsonBinSet(produits);
+      notif('Produits initialisés sur JSONBin !');
+    }
   } catch(e) {
-    produits = [...PRODUITS_INITIAUX];
+    produits = PRODUITS_INITIAUX.slice();
+    notif('JSONBin inaccessible, produits locaux', 'erreur');
   }
-
-  // URL Sheets sauvegardée
-  const urlSheets = localStorage.getItem('ghreen_sheets_url');
-  if (urlSheets) document.getElementById('sheetsUrl').value = urlSheets;
-
   mettreAJourStats();
   rendreProduits();
 }
 
-function sauvegarderDonnees() {
-  localStorage.setItem('ghreen_produits', JSON.stringify(produits));
+async function sauvegarderEnLigne() {
+  try {
+    await jsonBinSet(produits);
+    return true;
+  } catch(e) {
+    notif('Erreur de sauvegarde: ' + e.message, 'erreur');
+    return false;
+  }
 }
 
 /* ═══════════════════════════════════════════════════
    STATS
 ════════════════════════════════════════════════════ */
 function mettreAJourStats() {
-  const cats = [...new Set(produits.map(p => p.cat))];
-  const prixMoy = produits.length ? Math.round(produits.reduce((s,p) => s+p.prix, 0) / produits.length) : 0;
-  document.getElementById('statsGrid').innerHTML = `
-    <div class="stat-carte"><div class="stat-icone">📦</div><div><div class="stat-val">${produits.length}</div><div class="stat-lib">Produits</div></div></div>
-    <div class="stat-carte"><div class="stat-icone">🗂</div><div><div class="stat-val">${cats.length}</div><div class="stat-lib">Catégories</div></div></div>
-    <div class="stat-carte"><div class="stat-icone">💰</div><div><div class="stat-val">${prixMoy.toLocaleString('fr-FR')}</div><div class="stat-lib">Prix moyen (FCFA)</div></div></div>
-    <div class="stat-carte"><div class="stat-icone">⭐</div><div><div class="stat-val">${produits.filter(p=>p.badge).length}</div><div class="stat-lib">Avec badge</div></div></div>
-  `;
+  const cats = [];
+  produits.forEach(function(p){ if (cats.indexOf(p.cat) === -1) cats.push(p.cat); });
+  const prixMoy = produits.length ? Math.round(produits.reduce(function(s,p){ return s+p.prix; }, 0) / produits.length) : 0;
+  const el = document.getElementById('stats-admin');
+  if (!el) return;
+  el.innerHTML =
+    '<div class="stat-carte"><div class="stat-icone">📦</div><div><div class="stat-val">' + produits.length + '</div><div class="stat-lib">Produits</div></div></div>' +
+    '<div class="stat-carte"><div class="stat-icone">🗂️</div><div><div class="stat-val">' + cats.length + '</div><div class="stat-lib">Catégories</div></div></div>' +
+    '<div class="stat-carte"><div class="stat-icone">💰</div><div><div class="stat-val">' + prixMoy.toLocaleString('fr-FR') + '</div><div class="stat-lib">Prix moy. FCFA</div></div></div>' +
+    '<div class="stat-carte"><div class="stat-icone">⭐</div><div><div class="stat-val">' + produits.filter(function(p){ return p.badge; }).length + '</div><div class="stat-lib">Avec badge</div></div></div>';
 }
 
 /* ═══════════════════════════════════════════════════
-   RENDU TABLE
+   AFFICHAGE
 ════════════════════════════════════════════════════ */
 function rendreProduits() {
-  let liste = [...produits];
-  if (filtreActuel) liste = liste.filter(p =>
-    p.nom.toLowerCase().includes(filtreActuel) ||
-    p.cat.toLowerCase().includes(filtreActuel)
-  );
-  if (catFiltreActuel) liste = liste.filter(p => p.cat === catFiltreActuel);
-
-  const tbody = document.getElementById('tableProduits');
-  if (liste.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--gris);">Aucun produit trouvé</td></tr>`;
+  const grille = document.getElementById('grille-admin');
+  if (!grille) return;
+  const terme = (document.getElementById('recherche-admin') ? document.getElementById('recherche-admin').value : '').toLowerCase();
+  const liste = produits.filter(function(p){
+    return !terme || p.nom.toLowerCase().indexOf(terme) !== -1 || p.cat.toLowerCase().indexOf(terme) !== -1 || String(p.id).indexOf(terme) !== -1;
+  });
+  if (!liste.length) {
+    grille.innerHTML = '<div style="text-align:center;padding:3rem;color:#9e6b7a;font-family:Montserrat,sans-serif;">Aucun produit trouvé</div>';
     return;
   }
-  tbody.innerHTML = liste.map(p => `
-    <tr>
-      <td class="td-photo">
-        ${p.photos ? `<img src="${p.photos}" alt="${p.nom}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="no-photo" style="display:none;">${p.icone||'📦'}</div>` : `<div class="no-photo">${p.icone||'📦'}</div>`}
-      </td>
-      <td class="td-nom">${p.nom}</td>
-      <td><span class="td-cat">${p.cat}</span></td>
-      <td class="td-prix">${Number(p.prix).toLocaleString('fr-FR')} FCFA</td>
-      <td>${p.badge ? `<span class="td-badge">${p.badge}</span>` : '<span style="color:var(--gris);font-size:0.8rem;">—</span>'}</td>
-      <td>${'★'.repeat(Number(p.note)||5)}</td>
-      <td class="td-actions">
-        <button class="btn-edit" onclick="editerProduit(${p.id})">✏ Modifier</button>
-        <button class="btn-danger" onclick="demanderSuppression(${p.id}, '${p.nom.replace(/'/g,"\\'")}')">🗑</button>
-      </td>
-    </tr>
-  `).join('');
+  grille.innerHTML = liste.map(function(p){
+    const photo = Array.isArray(p.photos) ? p.photos[0] : p.photos;
+    const etoiles = '⭐'.repeat(p.note) + '☆'.repeat(5-p.note);
+    return '<div class="produit-admin-carte">' +
+      '<div class="produit-admin-img-wrap">' +
+      '<img src="' + photo + '" alt="' + p.nom + '" loading="lazy" onerror="this.style.opacity=\'0.2\'">' +
+      (p.badge ? '<span class="badge-admin">' + p.badge + '</span>' : '') +
+      '</div>' +
+      '<div class="produit-admin-info">' +
+      '<div class="produit-admin-nom">' + p.icone + ' ' + p.nom + '</div>' +
+      '<div class="produit-admin-cat">' + p.cat + '</div>' +
+      '<div class="produit-admin-prix">' + p.prix.toLocaleString('fr-FR') + ' FCFA</div>' +
+      '<div style="font-size:0.7rem;color:#9e6b7a;margin-top:0.3rem;">' + etoiles + '</div>' +
+      '</div>' +
+      '<div class="produit-admin-actions">' +
+      '<button class="btn-modifier" onclick="ouvrirEdition(' + p.id + ')">✏️ Modifier</button>' +
+      '<button class="btn-supprimer" onclick="supprimerProduit(' + p.id + ')">🗑️</button>' +
+      '</div></div>';
+  }).join('');
 }
-
-function filtrerTable(val) { filtreActuel = val.toLowerCase(); rendreProduits(); }
-function filtrerParCat(val) { catFiltreActuel = val; rendreProduits(); }
 
 /* ═══════════════════════════════════════════════════
-   FORMULAIRE AJOUT / MODIFICATION
+   ÉDITION
 ════════════════════════════════════════════════════ */
-function reinitialiserForm() {
-  document.getElementById('editId').value = '';
-  document.getElementById('fNom').value = '';
-  document.getElementById('fCat').value = '';
-  document.getElementById('fPrix').value = '';
-  document.getElementById('fBadge').value = '';
-  document.getElementById('fNote').value = '5';
-  document.getElementById('fIcone').value = '';
-  document.getElementById('fPhoto').value = '';
-  document.getElementById('formTitre').innerHTML = 'Ajouter un <span>produit</span>';
-}
-
-function editerProduit(id) {
-  const p = produits.find(x => x.id === id);
+function ouvrirEdition(id) {
+  const p = produits.find(function(x){ return x.id === id; });
   if (!p) return;
-  changerTab('ajouter', document.querySelectorAll('.tab')[1]);
-  document.getElementById('editId').value = p.id;
-  document.getElementById('fNom').value = p.nom;
-  document.getElementById('fCat').value = p.cat;
-  document.getElementById('fPrix').value = p.prix;
-  document.getElementById('fBadge').value = p.badge || '';
-  document.getElementById('fNote').value = p.note || '5';
-  document.getElementById('fIcone').value = p.icone || '';
-  document.getElementById('fPhoto').value = p.photos || '';
-  document.getElementById('formTitre').innerHTML = `Modifier le <span>produit</span>`;
-  window.scrollTo({top:0, behavior:'smooth'});
+  editId = id;
+  document.getElementById('edit-id').textContent = '#' + id;
+  document.getElementById('edit-nom').value = p.nom;
+  document.getElementById('edit-cat').value = p.cat;
+  document.getElementById('edit-prix').value = p.prix;
+  document.getElementById('edit-badge').value = p.badge || '';
+  document.getElementById('edit-note').value = p.note;
+  document.getElementById('edit-icone').value = p.icone;
+  document.getElementById('edit-photos').value = Array.isArray(p.photos) ? p.photos.join(', ') : (p.photos || '');
+  document.getElementById('modal-edition').style.display = 'flex';
 }
 
-function sauvegarderProduit() {
-  const nom   = document.getElementById('fNom').value.trim();
-  const cat   = document.getElementById('fCat').value;
-  const prix  = parseInt(document.getElementById('fPrix').value);
-  const badge = document.getElementById('fBadge').value;
-  const note  = parseInt(document.getElementById('fNote').value);
-  const icone = document.getElementById('fIcone').value.trim() || '📦';
-  const photo = document.getElementById('fPhoto').value.trim();
-  const editId= document.getElementById('editId').value;
+function ouvrirAjout() {
+  editId = null;
+  document.getElementById('edit-id').textContent = 'Nouveau';
+  document.getElementById('edit-nom').value = '';
+  document.getElementById('edit-cat').value = 'sacs';
+  document.getElementById('edit-prix').value = '';
+  document.getElementById('edit-badge').value = '';
+  document.getElementById('edit-note').value = '5';
+  document.getElementById('edit-icone').value = '🛍️';
+  document.getElementById('edit-photos').value = '';
+  document.getElementById('modal-edition').style.display = 'flex';
+}
 
-  if (!nom) { toast('⚠ Entrez le nom du produit', 'erreur'); return; }
-  if (!cat) { toast('⚠ Choisissez une catégorie', 'erreur'); return; }
-  if (!prix || prix <= 0) { toast('⚠ Entrez un prix valide', 'erreur'); return; }
+function fermerModal() {
+  document.getElementById('modal-edition').style.display = 'none';
+  editId = null;
+}
 
-  if (editId) {
-    const idx = produits.findIndex(p => p.id === parseInt(editId));
-    if (idx >= 0) {
-      produits[idx] = { ...produits[idx], nom, cat, prix, badge, note, icone, photos: photo };
-      toast('✅ Produit modifié avec succès !', 'succes');
-    }
+async function sauvegarderProduit() {
+  const nom   = document.getElementById('edit-nom').value.trim();
+  const cat   = document.getElementById('edit-cat').value;
+  const prix  = parseInt(document.getElementById('edit-prix').value);
+  const badge = document.getElementById('edit-badge').value.trim();
+  const note  = parseInt(document.getElementById('edit-note').value);
+  const icone = document.getElementById('edit-icone').value.trim() || '🛍️';
+  const photosRaw = document.getElementById('edit-photos').value.trim();
+  const photos = photosRaw.indexOf(',') !== -1 ? photosRaw.split(',').map(function(s){ return s.trim(); }).filter(Boolean) : photosRaw;
+
+  if (!nom || !cat || isNaN(prix)) {
+    notif('Nom, catégorie et prix sont obligatoires', 'erreur');
+    return;
+  }
+
+  const btns = document.querySelectorAll('#modal-edition button');
+  btns.forEach(function(b){ b.disabled = true; });
+
+  if (editId !== null) {
+    const idx = produits.findIndex(function(p){ return p.id === editId; });
+    if (idx !== -1) produits[idx] = { id: editId, nom: nom, cat: cat, prix: prix, badge: badge, note: note, icone: icone, photos: photos };
   } else {
-    const maxId = produits.length ? Math.max(...produits.map(p => p.id)) : 0;
-    produits.push({ id: maxId + 1, nom, cat, prix, badge, note, icone, photos: photo });
-    toast('✅ Produit ajouté avec succès !', 'succes');
+    const maxId = produits.length ? Math.max.apply(null, produits.map(function(p){ return p.id; })) : 0;
+    produits.push({ id: maxId + 1, nom: nom, cat: cat, prix: prix, badge: badge, note: note, icone: icone, photos: photos });
   }
 
-  sauvegarderDonnees();
-  mettreAJourStats();
-  reinitialiserForm();
-  changerTab('produits', document.querySelectorAll('.tab')[0]);
-  rendreProduits();
+  const ok = await sauvegarderEnLigne();
+  if (ok) {
+    notif(editId !== null ? 'Produit modifié sur le site !' : 'Nouveau produit ajouté sur le site !');
+    fermerModal();
+    mettreAJourStats();
+    rendreProduits();
+  }
+
+  btns.forEach(function(b){ b.disabled = false; });
 }
 
-/* ═══════════════════════════════════════════════════
-   SUPPRESSION
-════════════════════════════════════════════════════ */
-function demanderSuppression(id, nom) {
-  idASupprimer = id;
-  document.getElementById('confirmMsg').textContent = `Voulez-vous vraiment supprimer "${nom}" ? Cette action est irréversible.`;
-  document.getElementById('modalConfirm').classList.add('actif');
-}
-function fermerConfirm() {
-  idASupprimer = null;
-  document.getElementById('modalConfirm').classList.remove('actif');
-}
-function confirmerSuppression() {
-  if (!idASupprimer) return;
-  produits = produits.filter(p => p.id !== idASupprimer);
-  sauvegarderDonnees();
-  mettreAJourStats();
-  rendreProduits();
-  fermerConfirm();
-  toast('🗑 Produit supprimé', 'succes');
-}
-
-/* ═══════════════════════════════════════════════════
-   GOOGLE SHEETS
-════════════════════════════════════════════════════ */
-function sauvegarderSheetsUrl() {
-  const url = document.getElementById('sheetsUrl').value.trim();
-  if (!url.includes('docs.google.com')) { toast('⚠ URL Google Sheets invalide', 'erreur'); return; }
-  localStorage.setItem('ghreen_sheets_url', url);
-  toast('✅ URL Sheets sauvegardée !', 'succes');
-}
-
-async function testerSheets() {
-  const url = document.getElementById('sheetsUrl').value.trim();
-  const statut = document.getElementById('sheetsStatut');
-  if (!url) { toast('⚠ Entrez d\'abord l\'URL', 'erreur'); return; }
-  statut.style.display = 'block';
-  statut.style.background = '#fff9c4';
-  statut.style.border = '1px solid #f9a825';
-  statut.textContent = '⏳ Test de connexion en cours...';
-  try {
-    const res = await fetch(url);
-    if (res.ok) {
-      const txt = await res.text();
-      const lignes = txt.split('\n').filter(l => l.trim()).length;
-      statut.style.background = '#e8f5e9';
-      statut.style.border = '1px solid #27ae60';
-      statut.textContent = `✅ Connexion réussie ! ${lignes - 1} produit(s) trouvé(s) dans le Sheet.`;
-    } else {
-      throw new Error('Réponse non OK');
-    }
-  } catch(e) {
-    statut.style.background = '#ffebee';
-    statut.style.border = '1px solid #e53935';
-    statut.textContent = '❌ Impossible de lire le Sheet. Vérifiez que le document est bien publié (Fichier → Publier sur le web → CSV).';
+async function supprimerProduit(id) {
+  const p = produits.find(function(x){ return x.id === id; });
+  if (!p) return;
+  if (!confirm('Supprimer "' + p.nom + '" ?\n\nCe produit disparaîtra du site immédiatement.')) return;
+  const anciensProduits = produits.slice();
+  produits = produits.filter(function(x){ return x.id !== id; });
+  const ok = await sauvegarderEnLigne();
+  if (ok) {
+    notif('Produit supprimé du site !');
+    mettreAJourStats();
+    rendreProduits();
+  } else {
+    produits = anciensProduits;
+    rendreProduits();
   }
 }
 
-/* ═══════════════════════════════════════════════════
-   EXPORT
-════════════════════════════════════════════════════ */
-function exporterCSV() {
-  const entete = 'id,nom,cat,prix,badge,note,icone,photos\n';
-  const lignes = produits.map(p =>
-    `${p.id},"${p.nom}","${p.cat}",${p.prix},"${p.badge||''}",${p.note},"${p.icone||''}","${p.photos||''}"`
-  ).join('\n');
-  const blob = new Blob([entete + lignes], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = 'ghreen_produits.csv';
-  a.click(); URL.revokeObjectURL(url);
-  toast('📥 Fichier CSV téléchargé !', 'succes');
-}
-
-function exporterJSON() {
-  const json = 'const PRODUITS = ' + JSON.stringify(produits.map(p => ({
-    ...p, photos: [p.photos]
-  })), null, 2) + ';';
-  document.getElementById('jsonZone').style.display = 'block';
-  document.getElementById('jsonContenu').value = json;
-}
-
-function copierJSON() {
-  const ta = document.getElementById('jsonContenu');
-  ta.select();
-  document.execCommand('copy');
-  toast('📋 JSON copié ! Colle-le dans index.html', 'succes');
-}
-
-/* ═══════════════════════════════════════════════════
-   TABS
-════════════════════════════════════════════════════ */
-function changerTab(nom, btn) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('actif'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('actif'));
-  if (btn) btn.classList.add('actif');
-  const el = document.getElementById('tab-' + nom);
-  if (el) el.classList.add('actif');
-  if (nom === 'produits') rendreProduits();
-}
-
-/* ═══════════════════════════════════════════════════
-   TOAST
-════════════════════════════════════════════════════ */
-function toast(msg, type = '') {
-  const t = document.getElementById('adminToast');
-  t.textContent = msg;
-  t.className = 'visible ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { t.className = ''; }, 3500);
-}
+document.addEventListener('click', function(e) {
+  const modal = document.getElementById('modal-edition');
+  if (modal && e.target === modal) fermerModal();
+});
 </script>
 </body>
 </html>
