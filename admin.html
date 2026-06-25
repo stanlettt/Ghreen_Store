@@ -175,11 +175,8 @@ tr:hover td{background:var(--fond-2);}
 <div id="ecranLogin">
   <div class="login-box">
     <div class="login-logo">Ghreen<span>_Store</span></div>
-    <div class="login-sub">Espace Administrateur</div>
-    <div class="login-role">
-      <button class="role-btn on" id="roleOwnerBtn" onclick="setRole('owner')">👗 Propriétaire</button>
-      <button class="role-btn" id="roleDevBtn" onclick="setRole('dev')">🔐 Développeur</button>
-    </div>
+    <div class="login-sub">Espace Propriétaire</div>
+    <!-- accès unique visible -->
     <input type="password" id="mdp" placeholder="Mot de passe" onkeydown="if(event.key==='Enter')login()" />
     <div class="login-err" id="loginErr">Mot de passe incorrect.</div>
     <button class="btn-rose" style="width:100%;padding:0.9rem;" onclick="login()">Se connecter →</button>
@@ -419,33 +416,40 @@ async function sha256(msg) {
    LOGIN
 ══════════════════════════════════════ */
 function setRole(r) {
+  // Sélection de rôle désactivée — détection automatique par mot de passe
   role = r;
-  document.getElementById('roleOwnerBtn').classList.toggle('on', r==='owner');
-  document.getElementById('roleDevBtn').classList.toggle('on', r==='dev');
 }
 
 async function login() {
   const mdp  = document.getElementById('mdp').value;
   const hash = await sha256(mdp);
-  const ok   = (role==='owner' && hash===H.o) || (role==='dev' && hash===H.d);
-  if (ok) {
-    document.getElementById('ecranLogin').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    // Afficher les onglets dev si développeur
-    if (role === 'dev') {
-      document.getElementById('tabCommandes').style.display = 'block';
-      document.getElementById('tabRevenus').style.display = 'block';
-      document.getElementById('roleTag').textContent = '🔐 Développeur';
-      document.getElementById('roleTag').classList.add('dev');
-    } else {
-      document.getElementById('roleTag').textContent = '👗 Propriétaire';
-    }
-    charger();
+
+  if (hash === H.d) {
+    // Accès développeur — silencieux, rien ne trahit ce rôle
+    role = 'dev';
+  } else if (hash === H.o) {
+    role = 'owner';
   } else {
     document.getElementById('loginErr').classList.add('v');
     document.getElementById('mdp').value = '';
     document.getElementById('mdp').focus();
+    return;
   }
+
+  document.getElementById('ecranLogin').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  if (role === 'dev') {
+    // Onglets secrets — apparaissent uniquement pour toi
+    document.getElementById('tabCommandes').style.display = 'block';
+    document.getElementById('tabRevenus').style.display = 'block';
+    // Header discret — même affichage que la propriétaire
+    document.getElementById('roleTag').textContent = '👗 Propriétaire';
+  } else {
+    document.getElementById('roleTag').textContent = '👗 Propriétaire';
+  }
+
+  charger();
 }
 
 function logout() {
@@ -456,7 +460,6 @@ function logout() {
   document.getElementById('tabCommandes').style.display = 'none';
   document.getElementById('tabRevenus').style.display = 'none';
   role = 'owner';
-  setRole('owner');
   goTab('liste', document.querySelectorAll('.tab')[0]);
 }
 
