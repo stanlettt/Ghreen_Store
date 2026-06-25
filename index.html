@@ -1495,7 +1495,7 @@ footer {
 const WHATSAPP_NUMERO = '241077410586';
 
 
-const PRODUITS = [
+const PRODUITS_DEFAUT = [
   { id:1,  nom:'baya', cat:'vetements', icone:'👗', photos:['images/vetements1.jpg'], prix:4500, badge:'Nouveau', note:5 },
   { id:2,  nom:'baya', cat:'vetements', icone:'👗', photos:['images/vetements2.jpg'], prix:4500, badge:'Nouveau', note:5 },
   { id:3,  nom:'baya', cat:'vetements', icone:'👗', photos:['images/vetements3.jpg'], prix:4500, badge:'Nouveau', note:5 },
@@ -1575,20 +1575,48 @@ const INFOS_PAIEMENT = {
 /* ============================================================
    ÉTAT GLOBAL
    ============================================================ */
+/* ===========================================================
+   JSONBIN CONFIG
+   =========================================================== */
+const JSONBIN_API_KEY = '$2a$10$Shaara62aAtCwS1akXMMD.5wmCRQBUPy4QAaOMcN85vaP2lV31d96';
+const JSONBIN_BIN_ID  = '6a3c4a21f5f4af5e292b3a3b';
+
+async function chargerProduitsDepuisJsonBin() {
+  try {
+    const rep = await fetch('https://api.jsonbin.io/v3/b/' + JSONBIN_BIN_ID + '/latest', {
+      headers: { 'X-Master-Key': JSONBIN_API_KEY, 'X-Bin-Meta': 'false' }
+    });
+    if (!rep.ok) throw new Error('JSONBin ' + rep.status);
+    const data = await rep.json();
+    if (Array.isArray(data) && data.length > 0) return data;
+    return null;
+  } catch(e) {
+    console.warn('JSONBin inaccessible, produits locaux', e);
+    return null;
+  }
+}
+
+/* ===========================================================
+   \u00c9TAT GLOBAL
+   =========================================================== */
 let panier           = [];
 let categorieFiltre  = null;
 let produitEnCours   = null;
 let prixEnCours      = 0;
 let noteFormulaire   = 0;
 let favoris          = new Set();
-let produitsAffiches = [...PRODUITS];
+let PRODUITS         = [];
+let produitsAffiches = [];
 let toastTimer       = null;
 const photosActives  = {};
 
-/* ============================================================
+/* ===========================================================
    INIT
-   ============================================================ */
-document.addEventListener('DOMContentLoaded', () => {
+   =========================================================== */
+document.addEventListener('DOMContentLoaded', async () => {
+  const produitsEnLigne = await chargerProduitsDepuisJsonBin();
+  PRODUITS = produitsEnLigne || PRODUITS_DEFAUT;
+  produitsAffiches = [...PRODUITS];
   mettreAJourFiltresTags();
   afficherProduits();
   afficherCommentaires();
