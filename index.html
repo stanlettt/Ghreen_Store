@@ -2443,14 +2443,26 @@ function genererRecu(nom, tel, adresse, paiement) {
 
   envoyerNotifWhatsApp({ ref, nom, tel, adresse, paiement, articles, totalFinal, taille, couleur, notes, dateLivStr });
 
-  // ── Photo du produit commandé ──
-  let photoProduit = '';
+  // ── Photos de TOUS les articles commandés ──
+  let articlesAvecPhotos = [];
   if (produitEnCours !== null) {
     const p = PRODUITS.find(x => x.id === produitEnCours);
-    if (p && p.photos && p.photos.length > 0) photoProduit = p.photos[0];
+    articlesAvecPhotos = [{
+      nom: p ? p.nom : articles[0].nom,
+      qte: articles[0].qte,
+      prixUnit: articles[0].prixUnit,
+      photo: p && p.photos && p.photos.length > 0 ? p.photos[0] : ''
+    }];
   } else if (panier.length > 0) {
-    const p = PRODUITS.find(x => x.id === panier[0].id);
-    if (p && p.photos && p.photos.length > 0) photoProduit = p.photos[0];
+    articlesAvecPhotos = panier.map(item => {
+      const p = PRODUITS.find(x => x.id === item.id);
+      return {
+        nom: item.nom,
+        qte: item.qte,
+        prixUnit: item.prix,
+        photo: p && p.photos && p.photos.length > 0 ? p.photos[0] : ''
+      };
+    });
   }
 
   // ── Sauvegarde automatique dans JSONBin ──
@@ -2461,7 +2473,8 @@ function genererRecu(nom, tel, adresse, paiement) {
     adresse,
     paiement,
     produit: articles.map(a => `${a.nom} ×${a.qte}`).join(', '),
-    photo: photoProduit,
+    photo: articlesAvecPhotos.length > 0 ? articlesAvecPhotos[0].photo : '',
+    photos: articlesAvecPhotos,
     qte: articles.reduce((s,a) => s+a.qte, 0),
     taille: taille || '',
     couleur: couleur || '',

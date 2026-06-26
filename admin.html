@@ -177,6 +177,8 @@ body{font-family:var(--fc);background:var(--fond);color:var(--texte);font-size:1
 .fiche-body{padding:1rem;}
 .fiche-produit-bloc{display:flex;gap:1rem;align-items:flex-start;background:var(--fond-2);border-radius:var(--rs);padding:1rem;margin-bottom:1rem;border:1px solid rgba(194,24,91,0.1);}
 .fiche-photo{width:90px;height:90px;object-fit:cover;border-radius:var(--rs);border:2px solid rgba(194,24,91,0.2);flex-shrink:0;}
+.fiche-photo-grande{width:100%;max-height:320px;object-fit:cover;border-radius:var(--rs);border:2px solid rgba(194,24,91,0.15);display:block;margin-bottom:0.8rem;}
+.fiche-photo-grande-vide{width:100%;height:200px;background:var(--fond-2);border:2px dashed rgba(194,24,91,0.2);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:4rem;margin-bottom:0.8rem;}
 .fiche-photo-vide{width:90px;height:90px;background:var(--fond-2);border:2px dashed rgba(194,24,91,0.2);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;}
 .fiche-produit-nom{font-family:var(--ft);font-size:1.2rem;font-weight:300;margin-bottom:0.5rem;}
 .fiche-ligne{display:flex;justify-content:space-between;padding:0.35rem 0;border-bottom:1px solid rgba(194,24,91,0.06);font-size:0.82rem;}
@@ -970,9 +972,28 @@ function buildFiche(cmd, global) {
   const reste = cmd.montant - avance;
   const sl = cmd.statut==='paid'?'✅ Payée':cmd.statut==='pending'?'⏳ En attente':'❌ Annulée';
   const cb = global ? `rechercherRef(document.getElementById('refBarInput').value)` : `afficherFiche(commandes.find(c=>c.id===${cmd.id}))`;
-  const photoHTML = cmd.photo
-    ? `<img src="${cmd.photo}" alt="${cmd.produit||''}" class="fiche-photo" onerror="this.style.display='none'">`
-    : `<div class="fiche-photo-vide">📦</div>`;
+
+  // ── Photos : utiliser cmd.photos (tableau) ou fallback sur cmd.photo (ancienne commande)
+  const articlesPhotos = Array.isArray(cmd.photos) && cmd.photos.length > 0
+    ? cmd.photos
+    : (cmd.photo ? [{ nom: cmd.produit||'Article', qte: cmd.qte||1, prixUnit: cmd.montant, photo: cmd.photo }] : []);
+
+  const photosHTML = articlesPhotos.length > 0
+    ? `<div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-bottom:1rem;">
+        ${articlesPhotos.map(a => `
+          <div style="flex:1;min-width:130px;max-width:200px;background:var(--fond-2);border:1px solid rgba(194,24,91,0.15);border-radius:var(--rs);overflow:hidden;">
+            ${a.photo
+              ? `<img src="${a.photo}" alt="${a.nom}" style="width:100%;height:160px;object-fit:cover;display:block;" onerror="this.parentElement.innerHTML='<div style=\\'height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;\\'>📦</div>'">`
+              : `<div style="height:160px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;">📦</div>`
+            }
+            <div style="padding:0.5rem 0.6rem;">
+              <div style="font-family:var(--ft);font-size:0.95rem;font-weight:300;color:var(--texte);">${a.nom}</div>
+              <div style="font-size:0.72rem;color:var(--gris);margin-top:0.15rem;">×${a.qte} &nbsp;·&nbsp; ${Number(a.prixUnit*a.qte).toLocaleString('fr-FR')} FCFA</div>
+            </div>
+          </div>
+        `).join('')}
+      </div>`
+    : `<div style="height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;background:var(--fond-2);border-radius:var(--rs);margin-bottom:1rem;">📦</div>`;
 
   return `
   <div class="fiche">
@@ -984,28 +1005,38 @@ function buildFiche(cmd, global) {
       <span class="badge-statut ${cmd.statut}">${sl}</span>
     </div>
     <div class="fiche-body">
-      <div class="fiche-produit-bloc">
-        ${photoHTML}
-        <div>
-          <div class="fiche-section-titre">📦 Article</div>
-          <div class="fiche-produit-nom">${cmd.produit||'—'}</div>
-          <div class="fiche-ligne"><span class="fiche-ligne-lib">Quantité</span><span class="fiche-ligne-val">${cmd.qte||1}</span></div>
-          ${cmd.taille?`<div class="fiche-ligne"><span class="fiche-ligne-lib">Taille</span><span class="fiche-ligne-val">${cmd.taille}</span></div>`:''}
-          ${cmd.couleur?`<div class="fiche-ligne"><span class="fiche-ligne-lib">Couleur</span><span class="fiche-ligne-val">${cmd.couleur}</span></div>`:''}
-        </div>
+
+      <!-- PHOTOS ARTICLES -->
+      <div class="fiche-section-titre" style="margin-bottom:0.6rem;">📦 Articles commandés</div>
+      ${photosHTML}
+
+      <!-- DÉTAILS ARTICLE -->
+      <div class="fiche-section">
+        <div class="fiche-section-titre">🛍 Détail</div>
+        <div class="fiche-ligne"><span class="fiche-ligne-lib">Produit(s)</span><span class="fiche-ligne-val">${cmd.produit||'—'}</span></div>
+        <div class="fiche-ligne"><span class="fiche-ligne-lib">Quantité totale</span><span class="fiche-ligne-val">${cmd.qte||1}</span></div>
+        ${cmd.taille?`<div class="fiche-ligne"><span class="fiche-ligne-lib">Taille</span><span class="fiche-ligne-val">${cmd.taille}</span></div>`:''}
+        ${cmd.couleur?`<div class="fiche-ligne"><span class="fiche-ligne-lib">Couleur</span><span class="fiche-ligne-val">${cmd.couleur}</span></div>`:''}
       </div>
+
+      <!-- CLIENT -->
       <div class="fiche-section">
         <div class="fiche-section-titre">👤 Client</div>
         <div class="fiche-ligne"><span class="fiche-ligne-lib">Nom</span><span class="fiche-ligne-val">${cmd.nom||cmd.client||'—'}</span></div>
         <div class="fiche-ligne"><span class="fiche-ligne-lib">Téléphone</span><span class="fiche-ligne-val">${cmd.tel||'—'}</span></div>
         <div class="fiche-ligne"><span class="fiche-ligne-lib">Adresse</span><span class="fiche-ligne-val">${cmd.adresse||'—'}</span></div>
       </div>
+
+      <!-- MONTANTS -->
       <div class="fiche-montants">
         <div class="fiche-montant-row"><span class="fiche-montant-lib">💰 Total</span><span class="fiche-montant-val">${Number(cmd.montant).toLocaleString('fr-FR')} FCFA</span></div>
         <div class="fiche-montant-row"><span class="fiche-montant-lib">💵 Avance</span><span class="fiche-avance-val">${avance.toLocaleString('fr-FR')} FCFA</span></div>
         <div class="fiche-montant-row total"><span class="fiche-montant-lib">📦 Reste livraison</span><span class="fiche-reste-val">${reste.toLocaleString('fr-FR')} FCFA</span></div>
       </div>
+
       ${cmd.notes?`<div class="fiche-section"><div class="fiche-section-titre">📝 Notes</div><p style="font-size:0.82rem;color:var(--texte-doux);">${cmd.notes}</p></div>`:''}
+
+      <!-- ACTIONS -->
       <div class="fiche-actions">
         <span style="font-size:0.68rem;color:var(--gris);align-self:center;">Statut :</span>
         <button class="btn-statut paid"      onclick="changerStatut(${cmd.id},'paid');${cb}">✅ Payée</button>
