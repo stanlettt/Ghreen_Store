@@ -643,12 +643,15 @@ async function login() {
   }
   document.getElementById('ecranLogin').style.display = 'none';
   document.getElementById('app').style.display = 'block';
+  // Commandes : visible pour owner ET dev
+  document.getElementById('tabCmd').style.display = 'block';
+  document.getElementById('navBtnCmd').style.display = 'flex';
+
   if (role === 'dev') {
-    ['tabCmd','tabRev','navBtnCmd','navBtnRev'].forEach(id => {
+    ['tabRev','navBtnRev'].forEach(id => {
       const el = document.getElementById(id);
       if (el) el.style.display = 'flex';
     });
-    document.getElementById('tabCmd').style.display = 'block';
     document.getElementById('tabRev').style.display = 'block';
   }
   // ── AFFICHAGE IMMÉDIAT des produits par défaut ──
@@ -692,7 +695,8 @@ async function syncJSONBin() {
   // Re-render avec données finales
   renderStats();
   renderProduits();
-  if (role === 'dev') { renderCommandes(); renderRevenus(); }
+  renderCommandes();
+  if (role === 'dev') { renderRevenus(); }
 }
 
 async function sauvegarderServeur() {
@@ -843,9 +847,17 @@ function demanderDel(id, nom) {
 function closeDel() { idDel = null; document.getElementById('modalDel').classList.remove('on'); }
 async function confirmDel() {
   if (!idDel) return;
-  produits = produits.filter(p => p.id !== idDel); closeDel();
-  const ok = await sauvegarderServeur();
-  if (ok) { toast('🗑 Produit supprimé !', 'ok'); renderStats(); renderProduits(); }
+  if (String(idDel).startsWith('cmd_')) {
+    const cmdId = parseInt(String(idDel).replace('cmd_', ''));
+    commandes = commandes.filter(c => c.id !== cmdId);
+    closeDel();
+    const ok = await sauvegarderServeur();
+    if (ok) { toast('🗑 Commande supprimée !', 'ok'); renderStats(); renderCommandes(); if(role==='dev') renderRevenus(); }
+  } else {
+    produits = produits.filter(p => p.id !== idDel); closeDel();
+    const ok = await sauvegarderServeur();
+    if (ok) { toast('🗑 Produit supprimé !', 'ok'); renderStats(); renderProduits(); }
+  }
 }
 
 /* ═══════════════════════════════
@@ -885,15 +897,34 @@ function renderCommandes() {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:1.5rem;color:var(--gris);">Aucune commande</td></tr>`;
     return;
   }
-  tbody.innerHTML = liste.map(c => `<tr>
+  tbody.innerHTML = liste.map(c => {
+    const annulee = c.statut === 'cancelled';
+    return `<tr style="${annulee ? 'background:rgba(229,57,53,0.04);opacity:0.85;' : ''}">
     <td style="color:var(--gris);font-size:0.78rem;">${c.date}</td>
     <td>${c.nom||c.client||'—'}</td>
     <td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${c.produit||'—'}</td>
     <td style="color:var(--rose);font-weight:600;">${Number(c.montant).toLocaleString('fr-FR')}</td>
     <td style="font-size:0.75rem;">${c.paiement||'—'}</td>
     <td><span class="statut-badge ${c.statut}">${c.statut==='paid'?'✅ Payée':c.statut==='pending'?'⏳ Attente':'❌ Annulée'}</span></td>
-    <td><button class="btn-del" onclick="supprimerCommande(${c.id})">🗑</button></td>
-  </tr>`).join('');
+    <td>
+      ${annulee
+        ? `<button class="btn-del" style="background:var(--rouge);color:#fff;font-size:0.68rem;padding:0.3rem 0.7rem;" onclick="demanderDelCmd(${c.id})">🗑 Retirer</button>`
+        : `${role==='dev' ? `<button class="btn-del" onclick="demanderDelCmd(${c.id})">🗑</button>` : ''}`
+      }
+    </td>
+  </tr>`;
+  }).join('');
+}
+
+function demanderDelCmd(id) {
+  idDel = 'cmd_' + id;
+  const cmd = commandes.find(c => c.id === id);
+  const nom = cmd ? (cmd.nom || cmd.client || 'cette commande') : 'cette commande';
+  const annulee = cmd && cmd.statut === 'cancelled';
+  document.getElementById('delMsg').innerHTML = annulee
+    ? `Retirer la commande annulée de <strong>${nom}</strong> de l'historique ?`
+    : `Supprimer la commande de <strong>${nom}</strong> ? Irréversible.`;
+  document.getElementById('modalDel').classList.add('on');
 }
 
 async function supprimerCommande(id) {
@@ -1003,6 +1034,8 @@ async function changerStatut(id, statut) {
 }
 
 function calculerAvance(prix) {
+  // Moins de 8500 FCFA → avance = moitié du prix
+  if (prix < 8500) return Math.round(prix * 0.5);
   const T = [
     {max:8500,a:7000},{max:9000,a:7500},{max:10000,a:7500},{max:15000,a:9000},
     {max:18000,a:10000},{max:20000,a:12500},{max:22000,a:13000},{max:25000,a:15000},

@@ -1743,6 +1743,8 @@ const TABLEAU_AVANCES = [
 ];
 
 function calculerAvance(prix) {
+  // Moins de 8500 FCFA → avance = moitié du prix
+  if (prix < 8500) return Math.round(prix * 0.5);
   // Trouver le palier correspondant
   for (const palier of TABLEAU_AVANCES) {
     if (prix <= palier.max) return palier.avance;
@@ -2294,6 +2296,7 @@ function mettreAJourTotal() {
   const total  = prix * (produitEnCours !== null ? qte : 1);
   const avance = calculerAvance(total);
   const reste  = total - avance;
+  const estMoitie = total < 8500;
 
   document.getElementById('totalAffiche').textContent = total.toLocaleString('fr-FR') + ' FCFA';
 
@@ -2303,14 +2306,14 @@ function mettreAJourTotal() {
     blocAvance.innerHTML = `
       <div class="avance-bloc">
         <div class="avance-ligne principal">
-          <span>💳 Avance à payer maintenant</span>
+          <span>💳 Avance à payer maintenant${estMoitie ? ' <em style="font-size:0.75rem;font-style:normal;opacity:0.8;">(moitié du prix)</em>' : ''}</span>
           <strong>${avance.toLocaleString('fr-FR')} FCFA</strong>
         </div>
         <div class="avance-ligne reste">
-          <span>📦 Reste à la livraison</span>
+          <span>📦 Reste à payer à la livraison</span>
           <strong>${reste.toLocaleString('fr-FR')} FCFA</strong>
         </div>
-        <div class="avance-note">⚠ L'avance inclut les frais. La commande est confirmée dès réception de l'avance.</div>
+        <div class="avance-note">⚠ ${estMoitie ? `Pour les articles en dessous de 8 500 FCFA, l'avance est la moitié du prix (${avance.toLocaleString('fr-FR')} FCFA). Le reste (${reste.toLocaleString('fr-FR')} FCFA) est réglé à la livraison.` : `L'avance inclut les frais de traitement. La commande est confirmée dès réception de l'avance.`}</div>
       </div>`;
     blocAvance.style.display = 'block';
   }
@@ -2423,6 +2426,7 @@ function genererRecu(nom, tel, adresse, paiement) {
 
   const avanceRecu = calculerAvance(totalFinal);
   const resteRecu  = totalFinal - avanceRecu;
+  const estMoitieRecu = totalFinal < 8500;
 
   document.getElementById('recuInstruction').innerHTML = `
     <strong>📱 Instructions de paiement — ${paiement}</strong>
@@ -2430,7 +2434,7 @@ function genererRecu(nom, tel, adresse, paiement) {
     au numéro ${infoPaiement.numero || 'XXXX XXX XXX'} (${infoPaiement.nom || 'GHREEN STORE'}).<br>
     Mentionnez la référence <strong>${ref}</strong> dans votre transfert.<br>
     Le reste (<strong>${resteRecu.toLocaleString('fr-FR')} FCFA</strong>) sera réglé à la livraison.<br>
-    <small style="opacity:0.8;">L'avance inclut les frais. Commande confirmée dès réception. Merci ! ✦</small>
+    <small style="opacity:0.8;">${estMoitieRecu ? `Articles en dessous de 8 500 FCFA : avance = moitié du prix. ` : `L'avance inclut les frais. `}Commande confirmée dès réception de l'avance. Merci ! ✦</small>
   `;
 
   document.getElementById('recuBoite').style.display = 'block';
