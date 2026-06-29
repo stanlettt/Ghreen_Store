@@ -1936,21 +1936,22 @@ function activerLazyImages() {
       entries.forEach(entry => {
         if (!entry.isIntersecting) return;
         const img = entry.target;
-        if (img.dataset.src) {
-          img.src = img.dataset.src;
+        const src = img.dataset.src;
+        if (src) {
+          img.src = src;
           delete img.dataset.src;
+          img.removeAttribute('data-src');
         }
         _lazyObserver.unobserve(img);
       });
     }, {
-      rootMargin: '200px 0px', // Préchargement 200px avant d'entrer dans la vue
+      rootMargin: '400px 0px', // Préchargement 400px avant d'entrer dans la vue
       threshold: 0
     });
   }
 
-  // Observer uniquement les images principales (gs-lazy) sans src encore chargé
-  document.querySelectorAll('img.gs-lazy:not([src])').forEach(img => {
-    // Si déjà en cache (complete), charger immédiatement
+  // Observer TOUTES les images gs-lazy qui ont encore un data-src (pas encore chargées)
+  document.querySelectorAll('img.gs-lazy[data-src]').forEach(img => {
     _lazyObserver.observe(img);
   });
 }
@@ -1963,10 +1964,28 @@ function chargerImageSiNecessaire(img) {
   }
 }
 
+/* Force le chargement des images déjà visibles dans le viewport */
+function chargerImagesVisibles() {
+  document.querySelectorAll('img.gs-lazy[data-src]').forEach(img => {
+    const rect = img.getBoundingClientRect();
+    if (rect.top < window.innerHeight + 400) {
+      img.src = img.dataset.src;
+      delete img.dataset.src;
+      img.removeAttribute('data-src');
+    }
+  });
+}
+
 function initHeader() {
   window.addEventListener('scroll', () => {
     document.getElementById('mainHeader').classList.toggle('scrolled', window.scrollY > 50);
   });
+  // Filet de sécurité : charger les images lazy manquées lors du scroll
+  let _scrollLazyTimer = null;
+  window.addEventListener('scroll', () => {
+    clearTimeout(_scrollLazyTimer);
+    _scrollLazyTimer = setTimeout(chargerImagesVisibles, 100);
+  }, { passive: true });
 }
 
 function demarrerCompteurs() {
@@ -2098,6 +2117,9 @@ function afficherProduits(liste) {
   const rechercheVal = document.getElementById('rechercheInput').value.trim().toLowerCase();
   if (!liste) liste = produitsAffiches;
 
+  // Déconnecter l'observer avant de détruire le DOM (évite les entrées orphelines)
+  if (_lazyObserver) { _lazyObserver.disconnect(); }
+
   let affichage = categorieFiltre
     ? liste.filter(p => p.cat === categorieFiltre)
     : [...liste];
@@ -2144,7 +2166,7 @@ function afficherProduits(liste) {
           ${affichage.map(p => rendreCarte(p)).join('')}
         </div>
       </div>`;
-    requestAnimationFrame(() => activerLazyImages());
+    requestAnimationFrame(() => { activerLazyImages(); chargerImagesVisibles(); });
     return;
   }
 
@@ -2188,7 +2210,7 @@ function afficherProduits(liste) {
 
   contenu.innerHTML = html;
   // Activer le lazy loading sur les nouvelles images injectées
-  requestAnimationFrame(() => activerLazyImages());
+  requestAnimationFrame(() => { activerLazyImages(); chargerImagesVisibles(); });
 }
 
 function filtrerCategorie(cat) {
